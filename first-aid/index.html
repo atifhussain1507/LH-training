@@ -1020,6 +1020,8 @@ function verifyUser() {
             gate.style.display = 'none';
             const nameInput = document.getElementById('tNI');
             if (nameInput) nameInput.value = verifiedUser.name;
+            // Restore saved progress after login
+            restoreProgress();
           }, 500);
         }, 1000);
       } else {
@@ -1045,17 +1047,150 @@ function verifyUser() {
 const TM=13;let cm=1,done=new Set(),aPass=false,aScore=0;
 const MT=['Introduction to Paediatric First Aid','Assessing an Emergency','Paediatric CPR (RCUK 2025)','Recovery Position & Airway','Choking','Bleeding, Wounds & Shock','Burns & Scalds','Head Injuries & Fractures','Medical Emergencies','Poisoning & Other Injuries','Recording & Infection Control','Final Assessment','Certificate'];
 
+/* ══ PROGRESS PERSISTENCE (localStorage) ══ */
+function progressKey(){
+  if(!verifiedUser||!verifiedUser.email) return null;
+  return 'lh_pfa_progress_'+verifiedUser.email.toLowerCase().trim();
+}
+
+function saveProgress(){
+  const key=progressKey();
+  if(!key) return;
+  try{
+    localStorage.setItem(key, JSON.stringify({
+      done: Array.from(done),
+      cm: cm,
+      aPass: aPass,
+      aScore: aScore,
+      ts: Date.now()
+    }));
+  }catch(e){console.log('Could not save progress:',e);}
+}
+
+function restoreProgress(){
+  const key=progressKey();
+  if(!key) return;
+  try{
+    const saved=localStorage.getItem(key);
+    if(!saved) return;
+    const data=JSON.parse(saved);
+    // Only restore if less than 30 days old
+    if(Date.now()-data.ts > 30*24*60*60*1000){
+      localStorage.removeItem(key);
+      return;
+    }
+    if(data.done && data.done.length>0){
+      done=new Set(data.done);
+      aPass=data.aPass||false;
+      aScore=data.aScore||0;
+      const resumeModule=data.cm||1;
+      bS();uP();updateNavButtons();
+      // Navigate to where they left off (skip reveal for already-done modules)
+      gm(resumeModule, true);
+      console.log('Progress restored — resuming at Module '+resumeModule);
+    }
+  }catch(e){console.log('Could not restore progress:',e);}
+}
+
 /* ── Word-by-word content reveal ── */
 let revealActive=false, revealTimer=null;
 const WORDS_PER_SEC=6; // ~360 words/min reading speed
 
+/* ── Audio narration state ── */
+let audioEnabled=false, audioSpeaking=false;
+let currentUtterance=null;
+
+function getVoice(){
+  const voices=speechSynthesis.getVoices();
+  const preferred=['Google UK English Female','Samantha','Karen','Daniel','Google UK English Male'];
+  for(const name of preferred){
+    const v=voices.find(v=>v.name===name);
+    if(v) return v;
+  }
+  return voices.find(v=>v.lang==='en-GB')||voices.find(v=>v.lang.startsWith('en'))||voices[0]||null;
+}
+
+function speakEl(el){
+  return new Promise(resolve=>{
+    if(!audioEnabled||!el.textContent.trim()){resolve();return;}
+    speechSynthesis.cancel();
+    const utter=new SpeechSynthesisUtterance(el.textContent.trim());
+    const voice=getVoice();
+    if(voice) utter.voice=voice;
+    utter.rate=parseFloat(document.getElementById('audioSpeed')?.value||'1');
+    utter.pitch=1;
+    utter.onend=()=>{audioSpeaking=false;resolve();};
+    utter.onerror=()=>{audioSpeaking=false;resolve();};
+    currentUtterance=utter;
+    audioSpeaking=true;
+    speechSynthesis.speak(utter);
+  });
+}
+
+function stopAudio(){
+  speechSynthesis.cancel();
+  audioSpeaking=false;
+  currentUtterance=null;
+}
+
+function toggleAudio(){
+  const btn=document.getElementById('audioToggle');
+  const controls=document.getElementById('audioControls');
+  if(!audioEnabled){
+    audioEnabled=true;
+    btn.innerHTML='\uD83D\uDD0A';
+    btn.title='Audio narration ON — click to turn off';
+    if(controls) controls.style.display='flex';
+    // If module content is already fully revealed, read it all now
+    if(!revealActive){
+      readVisibleModule();
+    }
+  } else {
+    audioEnabled=false;
+    stopAudio();
+    btn.innerHTML='\uD83D\uDD07';
+    btn.title='Audio narration OFF — click to turn on';
+    if(controls) controls.style.display='none';
+  }
+}
+
+function pauseResumeAudio(){
+  const btn=document.getElementById('audioPauseBtn');
+  if(speechSynthesis.paused){
+    speechSynthesis.resume();
+    if(btn) btn.innerHTML='\u23F8';
+  } else if(speechSynthesis.speaking){
+    speechSynthesis.pause();
+    if(btn) btn.innerHTML='\u25B6';
+  }
+}
+
+function readVisibleModule(){
+  if(!audioEnabled) return;
+  const m=document.getElementById('m'+cm);
+  if(!m) return;
+  // Gather all visible text elements
+  const els=m.querySelectorAll('p,li,h2,h3,h4');
+  let idx=0;
+  function readNext(){
+    if(idx>=els.length||!audioEnabled) return;
+    const el=els[idx];
+    if(el.style.opacity==='0'){idx++;readNext();return;}
+    el.style.background='rgba(0,175,186,0.08)';
+    speakEl(el).then(()=>{
+      el.style.background='';
+      idx++;
+      readNext();
+    });
+  }
+  readNext();
+}
+
 function revealContent(moduleEl){
-  // Find all cards in this module
   const cards=moduleEl.querySelectorAll('.card,.sc,.asmh');
-  if(!cards.length)return Promise.resolve();
+  if(!cards.length) return Promise.resolve();
   
   return new Promise(resolve=>{
-    // Hide all cards initially
     cards.forEach(c=>{c.style.opacity='0';c.style.transition='opacity 0.3s ease'});
     
     let cardIdx=0;
@@ -1070,7 +1205,6 @@ function revealContent(moduleEl){
       const card=cards[cardIdx];
       card.style.opacity='1';
       
-      // Get all text nodes & elements inside the card
       const contentEls=card.querySelectorAll('p,li,h2,h3,h4,.qt,.ql,.qo,.so,.step-card,.lo-box,.hi-box,.al-box,.up-box,.ref-box');
       if(!contentEls.length){
         cardIdx++;
@@ -1078,7 +1212,6 @@ function revealContent(moduleEl){
         return;
       }
       
-      // Hide content elements
       contentEls.forEach(el=>{el.style.opacity='0';el.style.transition='opacity 0.25s ease'});
       
       let elIdx=0;
@@ -1091,12 +1224,21 @@ function revealContent(moduleEl){
         const el=contentEls[elIdx];
         el.style.opacity='1';
         
-        // Calculate delay based on word count
-        const words=el.textContent.trim().split(/\s+/).length;
-        const delay=Math.max(200, (words/WORDS_PER_SEC)*1000);
-        
-        elIdx++;
-        revealTimer=setTimeout(revealNextEl, delay);
+        // If audio is ON, speak the element and advance when speech ends
+        if(audioEnabled && el.textContent.trim()){
+          el.style.background='rgba(0,175,186,0.08)';
+          speakEl(el).then(()=>{
+            el.style.background='';
+            elIdx++;
+            revealNextEl();
+          });
+        } else {
+          // Silent mode: timer-based reveal
+          const words=el.textContent.trim().split(/\s+/).length;
+          const delay=Math.max(200, (words/WORDS_PER_SEC)*1000);
+          elIdx++;
+          revealTimer=setTimeout(revealNextEl, delay);
+        }
       }
       revealNextEl();
     }
@@ -1107,11 +1249,12 @@ function revealContent(moduleEl){
 function stopReveal(){
   revealActive=false;
   if(revealTimer)clearTimeout(revealTimer);
-  // Show everything in current module
+  stopAudio();
   const m=document.getElementById('m'+cm);
   if(m){
     m.querySelectorAll('.card,.sc,.asmh,p,li,h2,h3,h4,.qt,.ql,.qo,.so,.step-card,.lo-box,.hi-box,.al-box,.up-box,.ref-box').forEach(el=>{
       el.style.opacity='1';
+      el.style.background='';
     });
   }
 }
@@ -1119,9 +1262,7 @@ function stopReveal(){
 /* ── Module locking: must complete previous before next ── */
 function canAccessModule(n){
   if(n===1) return true;
-  // Module 13 (certificate) requires passing assessment
   if(n===13) return aPass;
-  // All other modules require the previous one to be done
   return done.has(n-1);
 }
 
@@ -1148,7 +1289,6 @@ function bS(){
 
 /* ── Module navigation buttons: lock next if current not done ── */
 function updateNavButtons(){
-  // Update all "Continue to Module X" buttons
   document.querySelectorAll('.mnav .btn-p').forEach(btn=>{
     const onclick=btn.getAttribute('onclick');
     if(!onclick) return;
@@ -1169,7 +1309,7 @@ function updateNavButtons(){
   });
 }
 
-function gm(n){
+function gm(n, skipReveal){
   if(!canAccessModule(n)){
     alert('Please complete the previous module first.');
     return;
@@ -1182,11 +1322,17 @@ function gm(n){
   if(m) m.classList.add('active');
   if(n===12) bA();
   bS();uP();updateNavButtons();
+  saveProgress();
   window.scrollTo({top:0,behavior:'smooth'});
   
   // Start word-by-word reveal for content modules (not assessment or certificate)
-  if(n<=11 && m){
+  if(n<=11 && m && !skipReveal){
     revealContent(m);
+  } else if(n<=11 && m && skipReveal){
+    // If restoring progress, show all content immediately
+    m.querySelectorAll('.card,.sc,.asmh,p,li,h2,h3,h4,.qt,.ql,.qo,.so,.step-card,.lo-box,.hi-box,.al-box,.up-box,.ref-box').forEach(el=>{
+      el.style.opacity='1';
+    });
   }
 }
 
@@ -1237,6 +1383,7 @@ if(p){
   document.getElementById('cAfA').style.display='inline-block';
   document.getElementById('rtBtn').style.display='none';
   done.add(12);bS();uP();updateNavButtons();
+  saveProgress();
 } else {
   document.getElementById('cAfA').style.display='none';
   document.getElementById('rtBtn').style.display='inline-block';
@@ -1260,13 +1407,13 @@ document.getElementById('cCertExp').textContent=certNum;
 logCertificate(aScore,15);
 document.getElementById('certA').style.display='block';
 document.getElementById('nEntry').style.display='none';
+saveProgress();
 }
 
 /* ── Download certificate as image ── */
 function downloadCert(){
   const cert=document.querySelector('.cert');
   if(!cert) return;
-  // Use html2canvas-style approach via canvas
   const printWin=window.open('','_blank');
   const styles=document.querySelectorAll('style,link[rel="stylesheet"]');
   let styleHTML='';
@@ -1287,7 +1434,6 @@ function emailCert(){
   const cName=document.getElementById('cName').textContent;
   const cRenew=document.getElementById('cRenew').textContent;
   
-  // Send via Apps Script
   if(VERIFICATION_URL==="PASTE_YOUR_WEB_APP_URL_HERE") return;
   
   const btn=document.querySelector('#certEmailBtn');
@@ -1323,6 +1469,49 @@ function emailCert(){
   });
 }
 
+/* ══ AUDIO CONTROLS INJECTION ══ */
+function injectAudioUI(){
+  // Floating audio button
+  const wrap=document.createElement('div');
+  wrap.id='audioWrap';
+  wrap.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9000;display:flex;flex-direction:column;align-items:flex-end;gap:8px;';
+  
+  // Speed + pause controls (hidden until audio enabled)
+  const controls=document.createElement('div');
+  controls.id='audioControls';
+  controls.style.cssText='display:none;align-items:center;gap:8px;background:#fff;padding:8px 14px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.15);font-family:Nunito,sans-serif;font-size:.8rem;';
+  controls.innerHTML='<button id="audioPauseBtn" onclick="pauseResumeAudio()" style="border:none;background:var(--ocean);color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;" title="Pause/Resume">\u23F8</button>'
+    +'<label style="color:var(--gray);font-weight:600;">Speed</label>'
+    +'<input type="range" id="audioSpeed" min="0.5" max="2" step="0.1" value="1" style="width:80px;accent-color:var(--ocean);">'
+    +'<span id="audioSpeedVal" style="color:var(--ocean);font-weight:700;min-width:30px;">1x</span>';
+  
+  // Main toggle button
+  const btn=document.createElement('button');
+  btn.id='audioToggle';
+  btn.onclick=toggleAudio;
+  btn.title='Audio narration OFF — click to turn on';
+  btn.innerHTML='\uD83D\uDD07';
+  btn.style.cssText='width:52px;height:52px;border-radius:50%;border:2px solid var(--ocean);background:#fff;color:var(--ocean);font-size:22px;cursor:pointer;box-shadow:0 3px 16px rgba(0,0,0,.15);transition:.2s;';
+  
+  wrap.appendChild(controls);
+  wrap.appendChild(btn);
+  document.body.appendChild(wrap);
+  
+  // Speed label update
+  const speedSlider=document.getElementById('audioSpeed');
+  if(speedSlider){
+    speedSlider.addEventListener('input',()=>{
+      document.getElementById('audioSpeedVal').textContent=speedSlider.value+'x';
+    });
+  }
+  
+  // Preload voices (some browsers need this)
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();
+}
+
+/* ══ INIT ══ */
+injectAudioUI();
 bS();gm(1);
 </script>
 </body>

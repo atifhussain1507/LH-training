@@ -1102,9 +1102,21 @@ else{document.getElementById('rtBtn').style.display='inline-block'}}
 function rtA(){document.getElementById('sDsp').style.display='none';document.getElementById('aSA').style.display='block';bA()}
 
 function genCert(){const n=document.getElementById('tNI').value.trim();if(!n){alert('Please enter your name.');return}
-document.getElementById('cName').textContent=n;
+const name=verifiedUser?verifiedUser.name:n;
+document.getElementById('cName').textContent=name;
 const now=new Date();
 document.getElementById('cDate').textContent=now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 const renew=new Date(now);renew.setFullYear(renew.getFullYear()+2);
 document.getElementById('cRenew').textContent=renew.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-document.getElementById('cScore').textContent=aScore+'/15 ('+Math.round(aScore
+document.getElementById('cScore').textContent=aScore+'/15 ('+Math.round(aScore/15*100)+'%)';
+const certNum='LH-PFA-'+Date.now().toString(36).toUpperCase();
+document.getElementById('cCertNum').textContent=certNum;
+document.getElementById('cCertExp').textContent=certNum;
+logCertificate(aScore,15);
+document.getElementById('certA').style.display='block';
+document.getElementById('nEntry').style.display='none';
+}
+bS();gm(1);
+</script>
+</body>
+</html>

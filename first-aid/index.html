@@ -893,7 +893,6 @@ h1,h2,h3,h4{font-family:'Baloo 2',sans-serif;line-height:1.3;color:var(--ocean)}
 <script>
 
 /* ══ STAFF VERIFICATION ══ */
-// ⚠️ PASTE YOUR WEB APP URL HERE (from Apps Script deployment)
 const VERIFICATION_URL = "https://script.google.com/macros/s/AKfycbyerZUIFzGg3YeaZ0ftFKZY2xNyFjvoV0-OkY0J4rmNlR9C291-_fvZIlcJ3-5Bk4ff/exec";
 
 let verifiedUser = null;
@@ -904,7 +903,7 @@ const COURSE_VERSION = "v2026.1";
 const CERT_VALID_MONTHS = 24;
 
 function logTestResult(score, totalQs, passed) {
-  if (VERIFICATION_URL === "https://script.google.com/macros/s/AKfycbyerZUIFzGg3YeaZ0ftFKZY2xNyFjvoV0-OkY0J4rmNlR9C291-_fvZIlcJ3-5Bk4ff/exec" || !verifiedUser) return;
+  if (VERIFICATION_URL === "PASTE_YOUR_WEB_APP_URL_HERE" || !verifiedUser) return;
   
   const payload = {
     action: "logResult",
@@ -932,7 +931,7 @@ function logTestResult(score, totalQs, passed) {
 }
 
 function logCertificate(score, totalQs) {
-  if (VERIFICATION_URL === "https://script.google.com/macros/s/AKfycbyerZUIFzGg3YeaZ0ftFKZY2xNyFjvoV0-OkY0J4rmNlR9C291-_fvZIlcJ3-5Bk4ff/exec" || !verifiedUser) return;
+  if (VERIFICATION_URL === "PASTE_YOUR_WEB_APP_URL_HERE" || !verifiedUser) return;
 
   return fetch(VERIFICATION_URL, {
     method: "POST",
@@ -965,7 +964,6 @@ function verifyUser() {
   const spinner = document.getElementById('vSpinner');
   const btn = document.getElementById('vBtn');
 
-  // Basic validation
   if (!name || !email) {
     msgEl.style.display = 'block';
     msgEl.style.background = '#FEE2E2';
@@ -982,14 +980,12 @@ function verifyUser() {
     return;
   }
 
-  // Show spinner, hide message
   msgEl.style.display = 'none';
   spinner.style.display = 'block';
   btn.disabled = true;
   btn.textContent = 'Verifying...';
 
-  // Check if URL has been configured
-  if (VERIFICATION_URL === "PASTE_YOUR_WEB_APP_URL_HERE") {    
+  if (VERIFICATION_URL === "PASTE_YOUR_WEB_APP_URL_HERE") {
     spinner.style.display = 'none';
     btn.disabled = false;
     btn.textContent = 'Verify & Start Training';
@@ -1000,7 +996,6 @@ function verifyUser() {
     return;
   }
 
-  // Call the Apps Script web app
   const url = VERIFICATION_URL + '?action=verify&name=' + encodeURIComponent(name) + '&email=' + encodeURIComponent(email);
 
   fetch(url)
@@ -1011,31 +1006,27 @@ function verifyUser() {
       btn.textContent = 'Verify & Start Training';
 
       if (data.authorised) {
-        // ✓ ACCESS GRANTED
         verifiedUser = { name: data.name || name, email: data.email || email };
         msgEl.style.display = 'block';
         msgEl.style.background = '#D1FAE5';
         msgEl.style.color = '#065F46';
-        msgEl.textContent = '✓ ' + data.message;
+        msgEl.textContent = '\u2713 ' + data.message;
 
-        // Fade out the gate after a short delay
         setTimeout(() => {
           const gate = document.getElementById('verifyGate');
           gate.style.transition = 'opacity 0.5s ease';
           gate.style.opacity = '0';
           setTimeout(() => {
             gate.style.display = 'none';
-            // Pre-fill the certificate name field if it exists
             const nameInput = document.getElementById('tNI');
             if (nameInput) nameInput.value = verifiedUser.name;
           }, 500);
         }, 1000);
       } else {
-        // ✗ ACCESS DENIED
         msgEl.style.display = 'block';
         msgEl.style.background = '#FEE2E2';
         msgEl.style.color = '#991B1B';
-        msgEl.textContent = '✗ ' + (data.message || 'Access denied. Please check your details.');
+        msgEl.textContent = '\u2717 ' + (data.message || 'Access denied. Please check your details.');
       }
     })
     .catch(err => {
@@ -1050,19 +1041,162 @@ function verifyUser() {
     });
 }
 
+/* ══ COURSE ENGINE ══ */
 const TM=13;let cm=1,done=new Set(),aPass=false,aScore=0;
 const MT=['Introduction to Paediatric First Aid','Assessing an Emergency','Paediatric CPR (RCUK 2025)','Recovery Position & Airway','Choking','Bleeding, Wounds & Shock','Burns & Scalds','Head Injuries & Fractures','Medical Emergencies','Poisoning & Other Injuries','Recording & Infection Control','Final Assessment','Certificate'];
 
-function bS(){const c=document.getElementById('sMods');c.innerHTML='';MT.forEach((t,i)=>{const n=i+1,d=document.createElement('div');d.className='mi'+(n===cm?' active':'')+(done.has(n)?' done':'');d.innerHTML='<div class="mn">'+(done.has(n)?'✓':n)+'</div><span>'+t+'</span>';d.onclick=()=>gm(n);c.appendChild(d)})}
+/* ── Word-by-word content reveal ── */
+let revealActive=false, revealTimer=null;
+const WORDS_PER_SEC=6; // ~360 words/min reading speed
 
-function gm(n){if(cm!==n)done.add(cm);cm=n;document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));const m=document.getElementById('m'+n);if(m)m.classList.add('active');if(n===12)bA();bS();uP();window.scrollTo({top:0,behavior:'smooth'})}
+function revealContent(moduleEl){
+  // Find all cards in this module
+  const cards=moduleEl.querySelectorAll('.card,.sc,.asmh');
+  if(!cards.length)return Promise.resolve();
   
+  return new Promise(resolve=>{
+    // Hide all cards initially
+    cards.forEach(c=>{c.style.opacity='0';c.style.transition='opacity 0.3s ease'});
+    
+    let cardIdx=0;
+    revealActive=true;
+    
+    function revealNextCard(){
+      if(cardIdx>=cards.length||!revealActive){
+        revealActive=false;
+        resolve();
+        return;
+      }
+      const card=cards[cardIdx];
+      card.style.opacity='1';
+      
+      // Get all text nodes & elements inside the card
+      const contentEls=card.querySelectorAll('p,li,h2,h3,h4,.qt,.ql,.qo,.so,.step-card,.lo-box,.hi-box,.al-box,.up-box,.ref-box');
+      if(!contentEls.length){
+        cardIdx++;
+        setTimeout(revealNextCard,300);
+        return;
+      }
+      
+      // Hide content elements
+      contentEls.forEach(el=>{el.style.opacity='0';el.style.transition='opacity 0.25s ease'});
+      
+      let elIdx=0;
+      function revealNextEl(){
+        if(elIdx>=contentEls.length||!revealActive){
+          cardIdx++;
+          setTimeout(revealNextCard,400);
+          return;
+        }
+        const el=contentEls[elIdx];
+        el.style.opacity='1';
+        
+        // Calculate delay based on word count
+        const words=el.textContent.trim().split(/\s+/).length;
+        const delay=Math.max(200, (words/WORDS_PER_SEC)*1000);
+        
+        elIdx++;
+        revealTimer=setTimeout(revealNextEl, delay);
+      }
+      revealNextEl();
+    }
+    revealNextCard();
+  });
+}
+
+function stopReveal(){
+  revealActive=false;
+  if(revealTimer)clearTimeout(revealTimer);
+  // Show everything in current module
+  const m=document.getElementById('m'+cm);
+  if(m){
+    m.querySelectorAll('.card,.sc,.asmh,p,li,h2,h3,h4,.qt,.ql,.qo,.so,.step-card,.lo-box,.hi-box,.al-box,.up-box,.ref-box').forEach(el=>{
+      el.style.opacity='1';
+    });
+  }
+}
+
+/* ── Module locking: must complete previous before next ── */
+function canAccessModule(n){
+  if(n===1) return true;
+  // Module 13 (certificate) requires passing assessment
+  if(n===13) return aPass;
+  // All other modules require the previous one to be done
+  return done.has(n-1);
+}
+
+function bS(){
+  const c=document.getElementById('sMods');c.innerHTML='';
+  MT.forEach((t,i)=>{
+    const n=i+1;
+    const accessible=canAccessModule(n);
+    const d=document.createElement('div');
+    d.className='mi'+(n===cm?' active':'')+(done.has(n)?' done':'');
+    if(!accessible&&n!==cm) d.style.opacity='0.45';
+    if(!accessible&&n!==cm) d.style.cursor='not-allowed';
+    d.innerHTML='<div class="mn">'+(done.has(n)?'\u2713':n)+'</div><span>'+t+((!accessible&&n!==cm)?' \uD83D\uDD12':'')+'</span>';
+    d.onclick=()=>{
+      if(!canAccessModule(n)){
+        alert('Please complete Module '+(n-1)+' first.');
+        return;
+      }
+      gm(n);
+    };
+    c.appendChild(d);
+  });
+}
+
+/* ── Module navigation buttons: lock next if current not done ── */
+function updateNavButtons(){
+  // Update all "Continue to Module X" buttons
+  document.querySelectorAll('.mnav .btn-p').forEach(btn=>{
+    const onclick=btn.getAttribute('onclick');
+    if(!onclick) return;
+    const match=onclick.match(/gm\((\d+)\)/);
+    if(!match) return;
+    const targetModule=parseInt(match[1]);
+    if(!canAccessModule(targetModule)){
+      btn.disabled=true;
+      btn.style.opacity='0.45';
+      btn.style.cursor='not-allowed';
+      btn.title='Complete this module first';
+    } else {
+      btn.disabled=false;
+      btn.style.opacity='1';
+      btn.style.cursor='pointer';
+      btn.title='';
+    }
+  });
+}
+
+function gm(n){
+  if(!canAccessModule(n)){
+    alert('Please complete the previous module first.');
+    return;
+  }
+  if(cm!==n) done.add(cm);
+  cm=n;
+  stopReveal();
+  document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));
+  const m=document.getElementById('m'+n);
+  if(m) m.classList.add('active');
+  if(n===12) bA();
+  bS();uP();updateNavButtons();
+  window.scrollTo({top:0,behavior:'smooth'});
+  
+  // Start word-by-word reveal for content modules (not assessment or certificate)
+  if(n<=11 && m){
+    revealContent(m);
+  }
+}
+
 function uP(){const p=Math.round(done.size/TM*100);document.getElementById('pFill').style.width=p+'%';document.getElementById('pTxt').textContent=p+'% Complete'}
 
 function cq(id,btn,cor){const b=document.getElementById(id);b.querySelectorAll('.qo').forEach(o=>{o.classList.add('d');if(o===btn)o.classList.add(cor?'c':'w');if(!cor&&o.getAttribute('onclick').includes(',1)'))o.classList.add('c')});document.getElementById(id+(cor?'_c':'_w')).classList.add('show')}
 
 function cs(id,btn,cor){const c=document.getElementById(id);c.querySelectorAll('.so').forEach(o=>{o.style.pointerEvents='none';if(o===btn)o.classList.add(cor?'c':'w');if(!cor&&o.getAttribute('onclick').includes(',1)'))o.classList.add('c')});document.getElementById(id+(cor?'_c':'_w')).classList.add('show')}
 
+/* ══ ASSESSMENT ══ */
 const AQ=[
 {q:'The three aims of first aid are:',o:['Diagnose, Treat, Discharge','Preserve life, Prevent worsening, Promote recovery','Assess, Medicate, Monitor','Call, Compress, Cover'],c:1},
 {q:'DRABC stands for:',o:['Danger, Response, Airway, Breathing, CPR/Circulation','Danger, Resuscitate, Assess, Breathe, Call','Diagnose, Respond, Act, Bandage, Care','Detect, Rescue, Analyse, Breathe, Compress'],c:0},
@@ -1077,12 +1211,15 @@ const AQ=[
 {q:'During a seizure, you should:',o:['Restrain the child to prevent injury','Put something in their mouth','Clear the area and protect them, noting the time','Give them water'],c:2},
 {q:'The first action for anaphylaxis is:',o:['Give antihistamine tablets','Call 999 and help use adrenaline auto-injector','Apply a cold compress','Give water to drink'],c:1},
 {q:'When recording a first aid incident, you must include:',o:['Only the child\'s name and injury','Date, time, location, details of child, injury, treatment given, and witnesses','Only what treatment was given','A photograph of the injury'],c:1},
-{q:'Under EYFS, at least how many people with paediatric first aid certification must be present when children are on site?',o:['None — it is just recommended','At least one','At least two','All staff members'],c:1},
+{q:'Under EYFS, at least how many people with paediatric first aid certification must be present when children are on site?',o:['None \u2014 it is just recommended','At least one','At least two','All staff members'],c:1},
 {q:'AEDs can be used on:',o:['Only adults over 18','Only children over 8','People of any age including infants','Only if paediatric pads are available'],c:2}
 ];
 let aAns={};
 
-function bA(){const c=document.getElementById('aQs');c.innerHTML='';aAns={};AQ.forEach((q,i)=>{let h='<div class="qb" id="aq'+i+'"><div class="ql">Question '+(i+1)+' of 15</div><div class="qt">'+q.q+'</div>';q.o.forEach((o,j)=>{h+='<button class="qo" onclick="sAA('+i+','+j+',this)">'+o+'</button>'});h+='</div>';c.innerHTML+=h})}
+function bA(){const c=document.getElementById('aQs');c.innerHTML='';aAns={};
+document.getElementById('aSA').style.display='block';
+document.getElementById('sDsp').style.display='none';
+AQ.forEach((q,i)=>{let h='<div class="qb" id="aq'+i+'"><div class="ql">Question '+(i+1)+' of 15</div><div class="qt">'+q.q+'</div>';q.o.forEach((o,j)=>{h+='<button class="qo" onclick="sAA('+i+','+j+',this)">'+o+'</button>'});h+='</div>';c.innerHTML+=h})}
 
 function sAA(qi,oi,btn){aAns[qi]=oi;const b=document.getElementById('aq'+qi);b.querySelectorAll('.qo').forEach(o=>{o.style.borderColor='var(--border)';o.style.background='var(--cream)';o.style.fontWeight='500'});btn.style.borderColor='var(--ocean)';btn.style.background='#E6F9FA';btn.style.fontWeight='700'}
 
@@ -1094,14 +1231,22 @@ document.getElementById('aSA').style.display='none';
 document.getElementById('sDsp').style.display='block';
 document.getElementById('sCir').className='scir '+(p?'pass':'fail');
 document.getElementById('sNum').textContent=s;
-document.getElementById('sMsg').textContent=p?'Congratulations — You Passed!':'Not Quite — Try Again';
+document.getElementById('sMsg').textContent=p?'Congratulations \u2014 You Passed!':'Not Quite \u2014 Try Again';
 document.getElementById('sSub').textContent='You scored '+s+'/15 ('+(Math.round(s/15*100))+'%). '+(p?'You met the 80% pass requirement.':'You need 80% (12/15) to pass.');
-if(p){document.getElementById('cAfA').style.display='inline-block';done.add(12);bS();uP()}
-else{document.getElementById('rtBtn').style.display='inline-block'}}
+if(p){
+  document.getElementById('cAfA').style.display='inline-block';
+  document.getElementById('rtBtn').style.display='none';
+  done.add(12);bS();uP();updateNavButtons();
+} else {
+  document.getElementById('cAfA').style.display='none';
+  document.getElementById('rtBtn').style.display='inline-block';
+}}
 
 function rtA(){document.getElementById('sDsp').style.display='none';document.getElementById('aSA').style.display='block';bA()}
 
+/* ══ CERTIFICATE ══ */
 function genCert(){const n=document.getElementById('tNI').value.trim();if(!n){alert('Please enter your name.');return}
+if(!aPass){alert('You must pass the assessment before generating a certificate.');return}
 const name=verifiedUser?verifiedUser.name:n;
 document.getElementById('cName').textContent=name;
 const now=new Date();
@@ -1116,6 +1261,68 @@ logCertificate(aScore,15);
 document.getElementById('certA').style.display='block';
 document.getElementById('nEntry').style.display='none';
 }
+
+/* ── Download certificate as image ── */
+function downloadCert(){
+  const cert=document.querySelector('.cert');
+  if(!cert) return;
+  // Use html2canvas-style approach via canvas
+  const printWin=window.open('','_blank');
+  const styles=document.querySelectorAll('style,link[rel="stylesheet"]');
+  let styleHTML='';
+  styles.forEach(s=>styleHTML+=s.outerHTML);
+  printWin.document.write('<!DOCTYPE html><html><head>'+styleHTML+'<style>body{margin:40px;background:#fff}@media print{body{margin:0}}</style></head><body>'+cert.outerHTML+'</body></html>');
+  printWin.document.close();
+  printWin.onload=function(){
+    printWin.print();
+  };
+}
+
+/* ── Email certificate ── */
+function emailCert(){
+  if(!verifiedUser||!verifiedUser.email){alert('No email address available.');return}
+  const certNum=document.getElementById('cCertNum').textContent;
+  const cDate=document.getElementById('cDate').textContent;
+  const cScore=document.getElementById('cScore').textContent;
+  const cName=document.getElementById('cName').textContent;
+  const cRenew=document.getElementById('cRenew').textContent;
+  
+  // Send via Apps Script
+  if(VERIFICATION_URL==="PASTE_YOUR_WEB_APP_URL_HERE") return;
+  
+  const btn=document.querySelector('#certEmailBtn');
+  if(btn){btn.disabled=true;btn.textContent='Sending...';}
+  
+  fetch(VERIFICATION_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "emailCertificate",
+      course: COURSE_NAME,
+      email: verifiedUser.email,
+      name: cName,
+      score: cScore,
+      certNum: certNum,
+      date: cDate,
+      renewBy: cRenew
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(btn){btn.disabled=false;btn.textContent='\u2709 Email Certificate';}
+    if(data.success){
+      alert('Certificate emailed to '+verifiedUser.email);
+    } else {
+      alert('Failed to send email. Please try downloading instead.');
+    }
+  })
+  .catch(err=>{
+    if(btn){btn.disabled=false;btn.textContent='\u2709 Email Certificate';}
+    alert('Failed to send email. Please try downloading instead.');
+    console.error('Email error:',err);
+  });
+}
+
 bS();gm(1);
 </script>
 </body>

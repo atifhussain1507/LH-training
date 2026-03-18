@@ -1055,8 +1055,8 @@ const MT=['Introduction to Paediatric First Aid','Assessing an Emergency','Paedi
 
 function bS(){const c=document.getElementById('sMods');c.innerHTML='';MT.forEach((t,i)=>{const n=i+1,d=document.createElement('div');d.className='mi'+(n===cm?' active':'')+(done.has(n)?' done':'');d.innerHTML='<div class="mn">'+(done.has(n)?'✓':n)+'</div><span>'+t+'</span>';d.onclick=()=>gm(n);c.appendChild(d)})}
 
-function gm(n){if(cm!==n)done.add(cm);cm=n;document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));const m=document.getElementById('m'+n);if(m)m.classList.add('active');bS();uP();window.scrollTo({top:0,behavior:'smooth'})}
-
+function gm(n){if(cm!==n)done.add(cm);cm=n;document.querySelectorAll('.mp').forEach(p=>p.classList.remove('active'));const m=document.getElementById('m'+n);if(m)m.classList.add('active');if(n===12)bA();bS();uP();window.scrollTo({top:0,behavior:'smooth'})}
+  
 function uP(){const p=Math.round(done.size/TM*100);document.getElementById('pFill').style.width=p+'%';document.getElementById('pTxt').textContent=p+'% Complete'}
 
 function cq(id,btn,cor){const b=document.getElementById(id);b.querySelectorAll('.qo').forEach(o=>{o.classList.add('d');if(o===btn)o.classList.add(cor?'c':'w');if(!cor&&o.getAttribute('onclick').includes(',1)'))o.classList.add('c')});document.getElementById(id+(cor?'_c':'_w')).classList.add('show')}

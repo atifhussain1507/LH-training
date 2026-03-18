@@ -1001,7 +1001,7 @@ function verifyUser() {
   }
 
   // Call the Apps Script web app
-  const url = VERIFICATION_URL + '?name=' + encodeURIComponent(name) + '&email=' + encodeURIComponent(email);
+  const url = VERIFICATION_URL + '?action=verify&name=' + encodeURIComponent(name) + '&email=' + encodeURIComponent(email);
 
   fetch(url)
     .then(response => response.json())

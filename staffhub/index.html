@@ -509,6 +509,13 @@
     var good=['valid','completed','update_service'];
     return good.indexOf(t.dbs)>-1&&good.indexOf(t.safeguarding)>-1;
   }
+  var activeStatFilter='';
+
+  function filterByStat(stat){
+    activeStatFilter=(activeStatFilter===stat)?'':stat; // Toggle off if same clicked
+    filterDashboard();
+  }
+
   function filterDashboard(){
     var f=getFilteredTutors();
     var exportType=document.getElementById('exportType').value;
@@ -520,11 +527,34 @@
     // Stats always show full filtered set (before compliant filter)
     var st={valid:0,expiring:0,expired:0,none:0};
     f.forEach(function(t){if(t.safeguarding==='valid'||t.safeguarding==='completed')st.valid++;else if(t.safeguarding==='expiring')st.expiring++;else if(t.safeguarding==='expired')st.expired++;else st.none++;});
-    document.getElementById('dashboardStats').innerHTML='<div class="stat-card"><div class="stat-number">'+f.length+'</div><div class="stat-label">Total Tutors</div></div><div class="stat-card stat-green"><div class="stat-number">'+st.valid+'</div><div class="stat-label">Compliant</div></div><div class="stat-card stat-amber"><div class="stat-number">'+st.expiring+'</div><div class="stat-label">Expiring Soon</div></div><div class="stat-card stat-red"><div class="stat-number">'+st.expired+'</div><div class="stat-label">Expired</div></div><div class="stat-card stat-gray"><div class="stat-number">'+st.none+'</div><div class="stat-label">No Record</div></div>';
+
+    function cardStyle(key){return activeStatFilter===key?'border:3px solid var(--ocean);cursor:pointer;':'cursor:pointer;border:3px solid transparent;';}
+    
+    document.getElementById('dashboardStats').innerHTML=
+      '<div class="stat-card" style="'+cardStyle('')+'" onclick="filterByStat(\'\')"><div class="stat-number">'+f.length+'</div><div class="stat-label">Total Tutors</div></div>'+
+      '<div class="stat-card stat-green" style="'+cardStyle('valid')+'" onclick="filterByStat(\'valid\')"><div class="stat-number">'+st.valid+'</div><div class="stat-label">Compliant</div></div>'+
+      '<div class="stat-card stat-amber" style="'+cardStyle('expiring')+'" onclick="filterByStat(\'expiring\')"><div class="stat-number">'+st.expiring+'</div><div class="stat-label">Expiring Soon</div></div>'+
+      '<div class="stat-card stat-red" style="'+cardStyle('expired')+'" onclick="filterByStat(\'expired\')"><div class="stat-number">'+st.expired+'</div><div class="stat-label">Expired</div></div>'+
+      '<div class="stat-card stat-gray" style="'+cardStyle('none')+'" onclick="filterByStat(\'none\')"><div class="stat-number">'+st.none+'</div><div class="stat-label">No Record</div></div>';
+
+    // Apply stat card filter
+    if(activeStatFilter){
+      displayed=displayed.filter(function(t){
+        if(activeStatFilter==='valid')return t.safeguarding==='valid'||t.safeguarding==='completed';
+        if(activeStatFilter==='expiring')return t.safeguarding==='expiring';
+        if(activeStatFilter==='expired')return t.safeguarding==='expired';
+        if(activeStatFilter==='none')return t.safeguarding==='none'&&t.safeguarding!=='valid'&&t.safeguarding!=='completed'&&t.safeguarding!=='expiring'&&t.safeguarding!=='expired';
+        return true;
+      });
+    }
     
     // Show count of displayed tutors if filtered
     var tableHeader='';
     if(exportType==='audit-compliant'){tableHeader='<div style="padding:12px 16px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border);">Showing <strong>'+displayed.length+'</strong> compliant tutors (of '+f.length+' total)</div>';}
+    else if(activeStatFilter){
+      var labels={'valid':'compliant','expiring':'expiring soon','expired':'expired','none':'with no record'};
+      tableHeader='<div style="padding:12px 16px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border);">Showing <strong>'+displayed.length+'</strong> tutors '+labels[activeStatFilter]+' · <a href="#" onclick="filterByStat(\'\');return false;" style="color:var(--ocean);">Show all</a></div>';
+    }
     
     var h=tableHeader+'<table class="data-table"><thead><tr><th>Name</th><th>Area</th><th>DBS</th><th>Safeguarding</th><th>First Aid</th></tr></thead><tbody>';
     displayed.forEach(function(t){

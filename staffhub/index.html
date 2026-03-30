@@ -207,9 +207,33 @@
     if(rt){
       resetToken=rt;
       showResetForm();
-      // Clean URL
       window.history.replaceState({},'',window.location.pathname);
+      return;
     }
+
+    // Try to restore session from sessionStorage
+    try{
+      var saved=JSON.parse(sessionStorage.getItem('hub_session')||'null');
+      if(saved&&saved.token&&saved.timestamp){
+        var age=(Date.now()-saved.timestamp)/60000; // minutes
+        if(age<10){
+          sessionToken=saved.token;
+          document.getElementById('loginScreen').style.display='none';
+          document.getElementById('app').style.display='block';
+          loadTutorList();
+          // Restore last view
+          if(saved.tab==='dashboard'){
+            switchTab('dashboard');
+            document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+            document.querySelectorAll('.tab')[1].classList.add('active');
+          } else if(saved.lastSearch){
+            document.getElementById('searchInput').value=saved.lastSearch;
+            doSearch();
+          }
+          return;
+        }
+      }
+    }catch(e){}
   })();
 
   // ══ API ══
@@ -223,6 +247,7 @@
     }).then(function(r){return r.json()}).then(function(d){
       if(d.error==='UNAUTHORIZED'){
         sessionToken='';
+        try{sessionStorage.removeItem('hub_session');}catch(e){}
         document.getElementById('app').style.display='none';
         document.getElementById('loginScreen').style.display='flex';
         showLoginForm();
@@ -273,9 +298,20 @@
 
   function enterApp(result){
     sessionToken=result.token;
+    saveSession();
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').style.display='block';
     loadTutorList();
+  }
+
+  function saveSession(extra){
+    try{
+      var data=JSON.parse(sessionStorage.getItem('hub_session')||'{}');
+      data.token=sessionToken;
+      data.timestamp=Date.now();
+      if(extra)for(var k in extra)data[k]=extra[k];
+      sessionStorage.setItem('hub_session',JSON.stringify(data));
+    }catch(e){}
   }
 
   // ══ LOGIN ══
@@ -377,6 +413,7 @@
     var n=document.getElementById('searchInput').value.trim();
     document.getElementById('autocompleteList').style.display='none';
     if(!n)return;
+    saveSession({tab:'search',lastSearch:n});
     var c=document.getElementById('searchResults');
     c.innerHTML='<div class="loading"><div class="spinner"></div><p style="margin-top:12px;">Loading profile...</p></div>';
     apiCall('hubsearch',{name:n}).then(function(d){renderProfile(n,d);}).catch(function(e){if(e.message!=='UNAUTHORIZED')c.innerHTML='<div class="empty-state">Error loading profile.</div>';});
@@ -444,6 +481,7 @@
     if(btn)btn.classList.add('active');
     document.getElementById('searchView').classList.toggle('hidden',tab!=='search');
     document.getElementById('dashboardView').classList.toggle('hidden',tab!=='dashboard');
+    saveSession({tab:tab});
     if(tab==='dashboard'&&!dashboardData.length)loadDashboard();
   }
 

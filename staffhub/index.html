@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Training Hub — Learning Hive</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ocean: #00AFBA;
+      --berry: #6F4B99;
+      --strawberry: #EF3340;
+      --sunshine: #FFDE44;
+      --sky: #51BAE8;
+      --candyfloss: #F298BC;
+      --bg: #F7F6F3;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --muted: #6B7280;
+      --border: #E8E4DF;
+      --green: #10B981;
+      --amber: #F59E0B;
+      --red: #EF4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── Login ── */
+    .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+    .login-card { background: var(--card); border-radius: 16px; padding: 48px 40px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+    .login-card h1 { font-size: 22px; font-weight: 700; color: var(--ocean); margin-bottom: 4px; }
+    .login-card .tagline { font-size: 12px; color: var(--berry); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 24px; }
+    .login-card h2 { font-size: 16px; font-weight: 600; margin-bottom: 20px; }
+    .login-card input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+    .login-card input:focus { border-color: var(--ocean); }
+    .login-card .error { color: var(--strawberry); font-size: 13px; margin-top: 8px; display: none; }
+
+    .btn { display: inline-block; padding: 12px 32px; border: none; border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn-primary { background: var(--ocean); color: #fff; margin-top: 16px; width: 100%; }
+    .btn-primary:hover { background: #009BA5; }
+    .btn-outline { background: transparent; color: var(--ocean); border: 2px solid var(--ocean); }
+    .btn-outline:hover { background: var(--ocean); color: #fff; }
+    .btn-sm { padding: 8px 20px; font-size: 13px; }
+
+    /* ── App ── */
+    .app { display: none; }
+    .header { background: #fff; border-bottom: 3px solid var(--ocean); padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .header h1 { font-size: 18px; font-weight: 700; color: var(--ocean); }
+    .header .subtitle { font-size: 11px; color: var(--berry); letter-spacing: 1px; text-transform: uppercase; }
+    .tabs { display: flex; gap: 4px; }
+    .tab { padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: transparent; color: var(--muted); border: none; font-family: 'Poppins', sans-serif; }
+    .tab:hover { background: #f0efec; }
+    .tab.active { background: var(--ocean); color: #fff; }
+    .content { padding: 24px; max-width: 1400px; margin: 0 auto; }
+
+    /* ── Search ── */
+    .search-bar { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .autocomplete-wrapper { position: relative; flex: 1; min-width: 250px; }
+    .search-bar input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 14px; outline: none; }
+    .search-bar input:focus { border-color: var(--ocean); }
+    .autocomplete-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 2px solid var(--border); border-top: none; border-radius: 0 0 8px 8px; max-height: 240px; overflow-y: auto; z-index: 100; display: none; }
+    .autocomplete-item { padding: 10px 16px; cursor: pointer; font-size: 14px; transition: background 0.1s; }
+    .autocomplete-item:hover, .autocomplete-item.highlighted { background: #E0F7FA; }
+
+    /* ── Profile ── */
+    .profile-header { background: linear-gradient(135deg, var(--ocean), var(--berry)); border-radius: 16px; padding: 32px; color: #fff; margin-bottom: 24px; display: flex; align-items: center; gap: 24px; }
+    .profile-avatar { width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; flex-shrink: 0; }
+    .profile-info h2 { font-size: 22px; font-weight: 700; }
+    .profile-info p { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+    /* ── Sections ── */
+    .section { background: var(--card); border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden; }
+    .section-header { padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+    .section-header h3 { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+    .section-header .chevron { transition: transform 0.2s; color: var(--muted); }
+    .section-header .chevron.open { transform: rotate(180deg); }
+    .section-body { padding: 0 24px 20px; }
+    .section-border-ocean { border-left: 4px solid var(--ocean); }
+    .section-border-berry { border-left: 4px solid var(--berry); }
+    .section-border-sky { border-left: 4px solid var(--sky); }
+    .section-border-sunshine { border-left: 4px solid var(--sunshine); }
+    .section-border-candyfloss { border-left: 4px solid var(--candyfloss); }
+
+    /* ── Table ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--border); color: var(--muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .data-table td { padding: 10px 12px; border-bottom: 1px solid #f3f2ef; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .dot-green { background: var(--green); }
+    .dot-amber { background: var(--amber); }
+    .dot-red { background: var(--red); }
+    .dot-gray { background: #D1D5DB; }
+
+    /* ── KV ── */
+    .kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .kv-item { padding: 12px; background: var(--bg); border-radius: 8px; }
+    .kv-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .kv-value { font-size: 14px; font-weight: 600; margin-top: 4px; }
+
+    /* ── Dashboard ── */
+    .dashboard-controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+    .dashboard-controls select { padding: 10px 16px; border: 2px solid var(--border); border-radius: 8px; font-family: 'Poppins', sans-serif; font-size: 13px; outline: none; background: #fff; }
+    .dashboard-stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-card { background: var(--card); border-radius: 12px; padding: 20px 24px; flex: 1; min-width: 140px; box-shadow: 0 2px 12px rgba(0,0,0,0.04); text-align: center; }
+    .stat-number { font-size: 32px; font-weight: 800; }
+    .stat-label { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .stat-green .stat-number { color: var(--green); }
+    .stat-amber .stat-number { color: var(--amber); }
+    .stat-red .stat-number { color: var(--red); }
+    .stat-gray .stat-number { color: var(--muted); }
+    .dashboard-table-wrap { background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+    .dashboard-table-wrap .data-table td { cursor: pointer; }
+    .dashboard-table-wrap .data-table tr:hover td { background: #f8f8f6; }
+
+    .loading { text-align: center; padding: 40px; color: var(--muted); }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--ocean); border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+    .rainbow { height: 4px; background: linear-gradient(90deg, var(--candyfloss), var(--sunshine), var(--ocean), var(--sky), var(--berry)); }
+    .export-row { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 16px; }
+    .hidden { display: none; }
+    .badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-green { background: rgba(16,185,129,0.2); color: #059669; }
+    .badge-amber { background: rgba(245,158,11,0.2); color: #D97706; }
+    .badge-red { background: rgba(239,68,68,0.2); color: #DC2626; }
+    .badge-gray { background: rgba(107,114,128,0.2); color: #4B5563; }
+
+    @media (max-width: 768px) {
+      .profile-header { flex-direction: column; text-align: center; }
+      .kv-grid { grid-template-columns: 1fr; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .dashboard-stats { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen" class="login-screen">
+    <div class="login-card">
+      <h1>Learning Hive</h1>
+      <p class="tagline">Nurturing potential together</p>
+      <div class="rainbow" style="margin-bottom:24px;border-radius:2px;"></div>
+      <h2>Staff Training Hub</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Authorised access only</p>
+      <input type="email" id="loginEmail" placeholder="Enter your email address" onkeydown="if(event.key==='Enter')doLogin()">
+      <p class="error" id="loginError">Access denied.</p>
+      <button class="btn btn-primary" onclick="doLogin()">Sign In</button>
+    </div>
+  </div>
+
+  <div id="app" class="app">
+    <div class="rainbow"></div>
+    <div class="header">
+      <div class="header-left">
+        <div>
+          <h1>Staff Training Hub</h1>
+          <p class="subtitle">Learning Hive</p>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('search', this)">Search</button>
+        <button class="tab" onclick="switchTab('dashboard', this)">Dashboard</button>
+      </div>
+    </div>
+
+    <div id="searchView" class="content">
+      <div class="search-bar">
+        <div class="autocomplete-wrapper">
+          <input type="text" id="searchInput" placeholder="Search by tutor name..." autocomplete="off"
+            oninput="onSearchInput()" onkeydown="onSearchKeydown(event)">
+          <div class="autocomplete-list" id="autocompleteList"></div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="doSearch()" style="margin-top:0;">Search</button>
+      </div>
+      <div id="searchResults"></div>
+    </div>
+
+    <div id="dashboardView" class="content hidden">
+      <div class="dashboard-controls">
+        <select id="areaFilter" onchange="filterDashboard()">
+          <option value="">All Areas / Councils</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="exportDashboardCSV()">Export CSV</button>
+      </div>
+      <div class="dashboard-stats" id="dashboardStats"></div>
+      <div class="dashboard-table-wrap" id="dashboardTable"></div>
+    </div>
+  </div>
+
+<script>
+  var API_URL = 'https://script.google.com/macros/s/AKfycbyerZUIFzGg3YeaZ0ftFKZY2xNyFjvoV0-OkY0J4rmNlR9C291-_fvZIlcJ3-5Bk4ff/exec';
+  var sessionToken = '';
+  var tutorList = [];
+  var dashboardData = [];
+  var highlightIndex = -1;
+
+  // ══ API HELPER ══
+  function apiCall(action, data) {
+    var payload = Object.assign({ action: action, token: sessionToken }, data || {});
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.error === 'UNAUTHORIZED') {
+        sessionToken = '';
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        var errEl = document.getElementById('loginError');
+        errEl.textContent = 'Session expired. Please sign in again.';
+        errEl.style.display = 'block';
+        throw new Error('UNAUTHORIZED');
+      }
+      return d;
+    });
+  }
+
+  // ══ LOGIN ══
+  function doLogin() {
+    var email = document.getElementById('loginEmail').value.trim();
+    var errEl = document.getElementById('loginError');
+    errEl.style.display = 'none';
+    if (!email) { errEl.textContent = 'Please enter your email.'; errEl.style.display = 'block'; return; }
+
+    apiCall('hublogin', { email: email }).then(function(result) {
+      if (result.allowed) {
+        sessionToken = result.token;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        loadTutorList();
+      } else {
+        errEl.textContent = 'Access denied. This portal is restricted to authorised administrators.';
+        errEl.style.display = 'block';
+      }
+    }).catch(function(e) {
+      if (e.message !== 'UNAUTHORIZED') {
+        errEl.textContent = 'Connection error. Please try again.';
+        errEl.style.display = 'block';
+      }
+    });
+  }
+
+  // ══ TUTOR LIST ══
+  function loadTutorList() {
+    apiCall('hubtutorlist').then(function(result) {
+      tutorList = result.tutors || [];
+    });
+  }
+
+  // ══ AUTOCOMPLETE ══
+  function onSearchInput() {
+    var val = document.getElementById('searchInput').value.trim().toLowerCase();
+    var listEl = document.getElementById('autocompleteList');
+    highlightIndex = -1;
+    if (val.length < 2) { listEl.style.display = 'none'; return; }
+    var matches = tutorList.filter(function(n) { return n.toLowerCase().indexOf(val) > -1; }).slice(0, 10);
+    if (matches.length === 0) { listEl.style.display = 'none'; return; }
+    listEl.innerHTML = matches.map(function(m) {
+      return '<div class="autocomplete-item" onclick="selectTutor(\'' + m.replace(/'/g, "\\'") + '\')">' + esc(m) + '</div>';
+    }).join('');
+    listEl.style.display = 'block';
+  }
+
+  function onSearchKeydown(e) {
+    var listEl = document.getElementById('autocompleteList');
+    var items = listEl.querySelectorAll('.autocomplete-item');
+    if (!items.length) { if (e.key === 'Enter') doSearch(); return; }
+    if (e.key === 'ArrowDown') { e.preventDefault(); highlightIndex = Math.min(highlightIndex + 1, items.length - 1); updateHighlight(items); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); highlightIndex = Math.max(highlightIndex - 1, 0); updateHighlight(items); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (highlightIndex >= 0 && items[highlightIndex]) selectTutor(items[highlightIndex].textContent); else doSearch(); }
+  }
+
+  function updateHighlight(items) { items.forEach(function(el, i) { el.classList.toggle('highlighted', i === highlightIndex); }); }
+
+  function selectTutor(name) {
+    document.getElementById('searchInput').value = name;
+    document.getElementById('autocompleteList').style.display = 'none';
+    doSearch();
+  }
+
+  document.addEventListener('click', function(e) { if (!e.target.closest('.autocomplete-wrapper')) document.getElementById('autocompleteList').style.display = 'none'; });
+
+  // ══ SEARCH ══
+  function doSearch() {
+    var name = document.getElementById('searchInput').value.trim();
+    document.getElementById('autocompleteList').style.display = 'none';
+    if (!name) return;
+
+    var container = document.getElementById('searchResults');
+    container.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top:12px;">Loading profile...</p></div>';
+
+    apiCall('hubsearch', { name: name }).then(function(data) {
+      renderProfile(name, data);
+    }).catch(function(e) {
+      if (e.message !== 'UNAUTHORIZED') container.innerHTML = '<div class="empty-state">Error loading profile. Please try again.</div>';
+    });
+  }
+
+  // ══ RENDER ══
+  function renderProfile(name, data) {
+    var container = document.getElementById('searchResults');
+    var email = (data.training && data.training.length > 0) ? data.training[0].email : '';
+    var area = data.dbs ? data.dbs.area : '';
+    var initials = name.split(' ').map(function(w) { return w[0]; }).join('').substring(0, 2).toUpperCase();
+
+    var h = '';
+    h += '<div class="profile-header"><div class="profile-avatar">' + initials + '</div><div class="profile-info"><h2>' + esc(name) + '</h2>';
+    if (email) h += '<p>' + esc(email) + '</p>';
+    if (area) h += '<p>' + esc(area) + '</p>';
+    h += '</div></div>';
+    h += '<div class="export-row"><button class="btn btn-outline btn-sm" onclick="exportProfileCSV()">Export CSV</button></div>';
+
+    // Training
+    h += '<div class="section section-border-ocean"><div class="section-header" onclick="toggleSection(this)"><h3>📚 Training Records' + (data.training ? ' (' + data.training.length + ')' : '') + '</h3><span class="chevron open">▼</span></div><div class="section-body">';
+    if (!data.training || data.training.length === 0) {
+      h += '<p class="empty-state">No training records found.</p>';
+    } else {
+      h += '<table class="data-table"><thead><tr><th>Training</th><th>Date</th><th>Score</th><th>Result</th><th>Certificate</th><th>Expiry</th><th>Source</th></tr></thead><tbody>';
+      data.training.forEach(function(r) {
+        var ec = getExpiryStatus(r.expiryRaw);
+        h += '<tr><td><strong>' + esc(r.trainingName) + '</strong><br><span style="font-size:11px;color:var(--muted);">' + esc(r.category) + '</span></td>';
+        h += '<td>' + esc(r.dateCompleted) + '</td><td>' + esc(r.score) + '</td><td>' + renderPF(r.passFail) + '</td><td>';
+        if (r.certNumber) { h += esc(r.certNumber); if (r.certLink) h += ' <a href="' + esc(r.certLink) + '" target="_blank" style="color:var(--ocean);">↗</a>'; }
+        h += '</td><td><span class="status-dot dot-' + ec + '"></span>' + esc(r.expiryDate) + '</td><td style="font-size:11px;color:var(--muted);">' + esc(r.source) + '</td></tr>';
+      });
+      h += '</tbody></table>';
+    }
+    h += '</div></div>';
+
+    // DBS
+    h += '<div class="section section-border-berry"><div class="section-header" onclick="toggleSection(this)"><h3>🔒 DBS Details</h3><span class="chevron open">▼</span></div><div class="section-body">';
+    if (!data.dbs) { h += '<p class="empty-state">No DBS record found on SCR.</p>'; }
+    else {
+      var dec = getExpiryStatus(data.dbs.dbsExpiryRaw);
+      h += '<div class="kv-grid">' + kv('DBS Number', data.dbs.dbsNumber) + kv('Level of Check', data.dbs.levelOfCheck) + kv('Check Date', data.dbs.dbsCheckDate) + kv('Issue Date', data.dbs.dbsIssueDate) + kvS('Expiry Date', data.dbs.dbsExpiryDate, dec) + kv('Area', data.dbs.area) + '</div>';
+    }
+    h += '</div></div>';
+
+    // References
+    h += '<div class="section section-border-sky"><div class="section-header" onclick="toggleSection(this)"><h3>📋 References</h3><span class="chevron open">▼</span></div><div class="section-body">';
+    if (!data.refs) { h += '<p class="empty-state">No reference data found.</p>'; }
+    else { h += '<div class="kv-grid">' + kv('Ref 1 Position', data.refs.ref1Position) + kv('Ref 1 Received', data.refs.ref1Received) + kv('Ref 2 Position', data.refs.ref2Position) + kv('Ref 2 Received', data.refs.ref2Received) + kv('Verified by Phone', data.refs.verifiedByPhone || 'Not recorded') + '</div>'; }
+    h += '</div></div>';
+
+    // Suitability
+    h += '<div class="section section-border-sunshine"><div class="section-header" onclick="toggleSection(this)"><h3>✅ Suitability Checks</h3><span class="chevron open">▼</span></div><div class="section-body">';
+    if (!data.suitability) { h += '<p class="empty-state">No suitability check data found.</p>'; }
+    else { h += '<div class="kv-grid">' + kv('Social Media Check', data.suitability.socialCheck || 'Not recorded') + kv('Section 128 Check', data.suitability.section128 || 'Not recorded') + kv('Teaching Checks', data.suitability.teachingChecks || 'Not recorded') + '</div>'; }
+    h += '</div></div>';
+
+    // Interview
+    h += '<div class="section section-border-candyfloss"><div class="section-header" onclick="toggleSection(this)"><h3>🎤 Interview</h3><span class="chevron open">▼</span></div><div class="section-body">';
+    if (!data.interview) { h += '<p class="empty-state">No interview data found.</p>'; }
+    else { h += '<div class="kv-grid">' + kv('Date', data.interview.date) + kv('Interviewer', data.interview.interviewer) + kv('Hiring Decision', data.interview.hiringDecision) + kv('Professionalism', data.interview.professionalism) + kv('Communication', data.interview.communication) + kv('Safeguarding', data.interview.safeguarding) + kv('SEND/SEMH Experience', data.interview.sendExperience) + kv('Confidence 1:1', data.interview.confidence1to1) + kv('Availability', data.interview.availability) + '</div>'; }
+    h += '</div></div>';
+
+    container.innerHTML = h;
+  }
+
+  // ══ HELPERS ══
+  function kv(label, val) { return '<div class="kv-item"><div class="kv-label">' + esc(label) + '</div><div class="kv-value">' + esc(val || '—') + '</div></div>'; }
+  function kvS(label, val, sc) { return '<div class="kv-item"><div class="kv-label">' + esc(label) + '</div><div class="kv-value"><span class="status-dot dot-' + sc + '"></span>' + esc(val || '—') + '</div></div>'; }
+  function renderPF(pf) { if (!pf) return ''; if (pf.toUpperCase() === 'PASS') return '<span style="color:var(--green);font-weight:600;">PASS</span>'; if (pf.toUpperCase() === 'FAIL') return '<span style="color:var(--red);font-weight:600;">FAIL</span>'; return esc(pf); }
+  function getExpiryStatus(iso) { if (!iso) return 'gray'; var d = new Date(iso), now = new Date(), t = new Date(now); t.setDate(t.getDate() + 30); if (d < now) return 'red'; if (d <= t) return 'amber'; return 'green'; }
+  function esc(s) { if (!s) return ''; var d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+  function toggleSection(el) { var b = el.nextElementSibling, c = el.querySelector('.chevron'); if (b.style.display === 'none') { b.style.display = ''; c.classList.add('open'); } else { b.style.display = 'none'; c.classList.remove('open'); } }
+
+  // ══ TABS ══
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    if (btn) btn.classList.add('active');
+    document.getElementById('searchView').classList.toggle('hidden', tab !== 'search');
+    document.getElementById('dashboardView').classList.toggle('hidden', tab !== 'dashboard');
+    if (tab === 'dashboard' && dashboardData.length === 0) loadDashboard();
+  }
+
+  // ══ DASHBOARD ══
+  function loadDashboard() {
+    document.getElementById('dashboardStats').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+    document.getElementById('dashboardTable').innerHTML = '';
+    apiCall('hubdashboard').then(function(data) {
+      dashboardData = data.tutors || [];
+      populateAreaFilter();
+      filterDashboard();
+    });
+  }
+
+  function populateAreaFilter() {
+    var areas = {};
+    dashboardData.forEach(function(t) { if (t.area) areas[t.area] = true; });
+    var sel = document.getElementById('areaFilter');
+    sel.innerHTML = '<option value="">All Areas / Councils</option>';
+    Object.keys(areas).sort().forEach(function(a) { sel.innerHTML += '<option value="' + esc(a) + '">' + esc(a) + '</option>'; });
+  }
+
+  function filterDashboard() {
+    var area = document.getElementById('areaFilter').value;
+    var f = area ? dashboardData.filter(function(t) { return t.area === area; }) : dashboardData;
+    var st = { valid: 0, expiring: 0, expired: 0, none: 0 };
+    f.forEach(function(t) { if (t.safeguarding === 'valid' || t.safeguarding === 'completed') st.valid++; else if (t.safeguarding === 'expiring') st.expiring++; else if (t.safeguarding === 'expired') st.expired++; else st.none++; });
+
+    document.getElementById('dashboardStats').innerHTML =
+      '<div class="stat-card"><div class="stat-number">' + f.length + '</div><div class="stat-label">Total Tutors</div></div>' +
+      '<div class="stat-card stat-green"><div class="stat-number">' + st.valid + '</div><div class="stat-label">Compliant</div></div>' +
+      '<div class="stat-card stat-amber"><div class="stat-number">' + st.expiring + '</div><div class="stat-label">Expiring Soon</div></div>' +
+      '<div class="stat-card stat-red"><div class="stat-number">' + st.expired + '</div><div class="stat-label">Expired</div></div>' +
+      '<div class="stat-card stat-gray"><div class="stat-number">' + st.none + '</div><div class="stat-label">No Record</div></div>';
+
+    var h = '<table class="data-table"><thead><tr><th>Name</th><th>Area</th><th>DBS</th><th>Safeguarding</th><th>First Aid</th></tr></thead><tbody>';
+    f.forEach(function(t) {
+      h += '<tr onclick="selectTutor(\'' + t.name.replace(/'/g, "\\'") + '\');switchTab(\'search\');document.querySelectorAll(\'.tab\').forEach(function(el){el.classList.remove(\'active\')});document.querySelectorAll(\'.tab\')[0].classList.add(\'active\');">';
+      h += '<td><strong>' + esc(t.name) + '</strong></td><td>' + esc(t.area) + '</td><td>' + pill(t.dbs) + '</td><td>' + pill(t.safeguarding) + '</td><td>' + pill(t.firstAid) + '</td></tr>';
+    });
+    h += '</tbody></table>';
+    document.getElementById('dashboardTable').innerHTML = h;
+  }
+
+  function pill(s) {
+    var m = { 'valid':'<span class="badge badge-green">● Valid</span>', 'completed':'<span class="badge badge-green">● Complete</span>', 'update_service':'<span class="badge badge-green">● Update Service</span>', 'expiring':'<span class="badge badge-amber">● Expiring</span>', 'expired':'<span class="badge badge-red">● Expired</span>', 'fail':'<span class="badge badge-red">● Failed</span>', 'none':'<span class="badge badge-gray">○ None</span>' };
+    return m[s] || m['none'];
+  }
+
+  // ══ CSV ══
+  function exportProfileCSV() {
+    var t = document.querySelector('#searchResults .data-table');
+    if (!t) return;
+    var csv = [];
+    t.querySelectorAll('tr').forEach(function(row) {
+      var cols = [];
+      row.querySelectorAll('th, td').forEach(function(cell) { cols.push('"' + cell.textContent.replace(/"/g, '""').replace(/\n/g, ' ').trim() + '"'); });
+      csv.push(cols.join(','));
+    });
+    dl(csv.join('\n'), 'training_record.csv');
+  }
+
+  function exportDashboardCSV() {
+    var area = document.getElementById('areaFilter').value;
+    var f = area ? dashboardData.filter(function(t) { return t.area === area; }) : dashboardData;
+    var csv = ['"Name","Area","DBS","Safeguarding","First Aid"'];
+    f.forEach(function(t) { csv.push('"' + t.name + '","' + t.area + '","' + t.dbs + '","' + t.safeguarding + '","' + t.firstAid + '"'); });
+    dl(csv.join('\n'), 'dashboard_export.csv');
+  }
+
+  function dl(content, filename) {
+    var b = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = filename;
+    a.click();
+  }
+</script>
+</body>
+</html>

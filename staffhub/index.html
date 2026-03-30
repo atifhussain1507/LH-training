@@ -179,7 +179,7 @@
     <div id="dashboardView" class="content hidden">
       <div class="dashboard-controls">
         <select id="areaFilter" onchange="filterDashboard()"><option value="">All Areas / Councils</option></select>
-        <select id="exportType">
+        <select id="exportType" onchange="filterDashboard()">
           <option value="summary">Summary (internal)</option>
           <option value="audit-all">Full Audit (all tutors)</option>
           <option value="audit-compliant">Full Audit (compliant only)</option>
@@ -434,7 +434,7 @@
   function kv(l,v){return'<div class="kv-item"><div class="kv-label">'+esc(l)+'</div><div class="kv-value">'+esc(v||'—')+'</div></div>';}
   function kvS(l,v,s){return'<div class="kv-item"><div class="kv-label">'+esc(l)+'</div><div class="kv-value"><span class="status-dot dot-'+s+'"></span>'+esc(v||'—')+'</div></div>';}
   function pf(v){if(!v)return'';if(v.toUpperCase()==='PASS')return'<span style="color:var(--green);font-weight:600;">PASS</span>';if(v.toUpperCase()==='FAIL')return'<span style="color:var(--red);font-weight:600;">FAIL</span>';return esc(v);}
-  function expSt(iso){if(!iso)return'gray';var d=new Date(iso),now=new Date(),t=new Date(now);t.setDate(t.getDate()+30);if(d<now)return'red';if(d<=t)return'amber';return'green';}
+  function expSt(iso){if(!iso)return'gray';if(iso==='update_service')return'green';var d=new Date(iso),now=new Date(),t=new Date(now);t.setDate(t.getDate()+30);if(d<now)return'red';if(d<=t)return'amber';return'green';}
   function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=String(s);return d.innerHTML;}
   function tog(el){var b=el.nextElementSibling,c=el.querySelector('.chevron');if(b.style.display==='none'){b.style.display='';c.classList.add('open');}else{b.style.display='none';c.classList.remove('open');}}
 
@@ -473,11 +473,23 @@
   }
   function filterDashboard(){
     var f=getFilteredTutors();
+    var exportType=document.getElementById('exportType').value;
+    
+    // Apply compliant filter if selected
+    var displayed=f;
+    if(exportType==='audit-compliant'){displayed=f.filter(isCompliant);}
+    
+    // Stats always show full filtered set (before compliant filter)
     var st={valid:0,expiring:0,expired:0,none:0};
     f.forEach(function(t){if(t.safeguarding==='valid'||t.safeguarding==='completed')st.valid++;else if(t.safeguarding==='expiring')st.expiring++;else if(t.safeguarding==='expired')st.expired++;else st.none++;});
     document.getElementById('dashboardStats').innerHTML='<div class="stat-card"><div class="stat-number">'+f.length+'</div><div class="stat-label">Total Tutors</div></div><div class="stat-card stat-green"><div class="stat-number">'+st.valid+'</div><div class="stat-label">Compliant</div></div><div class="stat-card stat-amber"><div class="stat-number">'+st.expiring+'</div><div class="stat-label">Expiring Soon</div></div><div class="stat-card stat-red"><div class="stat-number">'+st.expired+'</div><div class="stat-label">Expired</div></div><div class="stat-card stat-gray"><div class="stat-number">'+st.none+'</div><div class="stat-label">No Record</div></div>';
-    var h='<table class="data-table"><thead><tr><th>Name</th><th>Area</th><th>DBS</th><th>Safeguarding</th><th>First Aid</th></tr></thead><tbody>';
-    f.forEach(function(t){
+    
+    // Show count of displayed tutors if filtered
+    var tableHeader='';
+    if(exportType==='audit-compliant'){tableHeader='<div style="padding:12px 16px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--border);">Showing <strong>'+displayed.length+'</strong> compliant tutors (of '+f.length+' total)</div>';}
+    
+    var h=tableHeader+'<table class="data-table"><thead><tr><th>Name</th><th>Area</th><th>DBS</th><th>Safeguarding</th><th>First Aid</th></tr></thead><tbody>';
+    displayed.forEach(function(t){
       var areaDisplay=(t.areas||[]).join(', ');
       h+='<tr onclick="selectTutor(\''+t.name.replace(/'/g,"\\'")+'\');switchTab(\'search\');document.querySelectorAll(\'.tab\').forEach(function(el){el.classList.remove(\'active\')});document.querySelectorAll(\'.tab\')[0].classList.add(\'active\');"><td><strong>'+esc(t.name)+'</strong></td><td>'+esc(areaDisplay)+'</td><td>'+pill(t.dbs)+'</td><td>'+pill(t.safeguarding)+'</td><td>'+pill(t.firstAid)+'</td></tr>';
     });

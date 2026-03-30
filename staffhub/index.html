@@ -504,7 +504,61 @@
     if(type==='summary'){exportSummaryCSV();}
     else{exportAuditCSV(type==='audit-compliant');}
   }
-  function exportProfileCSV(){var t=document.querySelector('#searchResults .data-table');if(!t)return;var csv=[];t.querySelectorAll('tr').forEach(function(row){var cols=[];row.querySelectorAll('th, td').forEach(function(cell){cols.push('"'+cell.textContent.replace(/"/g,'""').replace(/\n/g,' ').trim()+'"')});csv.push(cols.join(','))});dl(csv.join('\n'),'training_record.csv');}
+  function exportProfileCSV(){
+    var name=document.getElementById('searchInput').value.trim();
+    if(!name)return;
+    var btn=document.querySelector('.export-row .btn-outline');
+    var orig=btn.textContent;
+    btn.textContent='Exporting...';btn.disabled=true;
+
+    apiCall('hubsearch',{name:name}).then(function(data){
+      btn.textContent=orig;btn.disabled=false;
+      var csv=['"Category","Detail","Date","Score","Result","Certificate No","Expiry Date","Source"'];
+      var safeName=name.replace(/"/g,'""');
+
+      // Training records
+      (data.training||[]).forEach(function(r){
+        csv.push('"Training","'+esc2(r.trainingName)+'","'+esc2(r.dateCompleted)+'","'+esc2(r.score)+'","'+esc2(r.passFail)+'","'+esc2(r.certNumber)+'","'+esc2(r.expiryDate)+'","'+esc2(r.source)+'"');
+      });
+
+      // DBS
+      if(data.dbs){
+        csv.push('"DBS","DBS Number: '+esc2(data.dbs.dbsNumber)+'","'+esc2(data.dbs.dbsCheckDate)+'","","","'+esc2(data.dbs.dbsNumber)+'","'+esc2(data.dbs.dbsExpiryDate)+'","SCR"');
+        csv.push('"DBS","Level of Check: '+esc2(data.dbs.levelOfCheck)+'","","","","","","SCR"');
+        csv.push('"DBS","Issue Date: '+esc2(data.dbs.dbsIssueDate)+'","'+esc2(data.dbs.dbsIssueDate)+'","","","","","SCR"');
+      }
+
+      // References
+      if(data.refs){
+        if(data.refs.ref1Position||data.refs.ref1Received)csv.push('"Reference","Reference 1: '+esc2(data.refs.ref1Position)+'","'+esc2(data.refs.ref1Received)+'","","","","","SCR"');
+        if(data.refs.ref2Position||data.refs.ref2Received)csv.push('"Reference","Reference 2: '+esc2(data.refs.ref2Position)+'","'+esc2(data.refs.ref2Received)+'","","","","","SCR"');
+        if(data.refs.verifiedByPhone)csv.push('"Reference","Verified by Phone: Yes","","","","","","SCR"');
+      }
+
+      // Suitability
+      if(data.suitability){
+        if(data.suitability.socialCheck)csv.push('"Suitability","Social Media Check","'+esc2(data.suitability.socialCheck)+'","","","","","SCR"');
+        if(data.suitability.section128)csv.push('"Suitability","Section 128 Check","'+esc2(data.suitability.section128)+'","","","","","SCR"');
+        if(data.suitability.teachingChecks)csv.push('"Suitability","Teaching Checks","'+esc2(data.suitability.teachingChecks)+'","","","","","SCR"');
+      }
+
+      // Interview
+      if(data.interview){
+        csv.push('"Interview","Interview Date","'+esc2(data.interview.date)+'","","","","","SCR"');
+        if(data.interview.interviewer)csv.push('"Interview","Interviewer: '+esc2(data.interview.interviewer)+'","","","","","","Interview Form"');
+        if(data.interview.hiringDecision)csv.push('"Interview","Hiring Decision: '+esc2(data.interview.hiringDecision)+'","","","","","","Interview Form"');
+        if(data.interview.professionalism)csv.push('"Interview","Professionalism: '+esc2(data.interview.professionalism)+'","","","","","","Interview Form"');
+        if(data.interview.communication)csv.push('"Interview","Communication: '+esc2(data.interview.communication)+'","","","","","","Interview Form"');
+        if(data.interview.safeguarding)csv.push('"Interview","Safeguarding: '+esc2(data.interview.safeguarding)+'","","","","","","Interview Form"');
+        if(data.interview.sendExperience)csv.push('"Interview","SEND/SEMH Experience: '+esc2(data.interview.sendExperience)+'","","","","","","Interview Form"');
+        if(data.interview.confidence1to1)csv.push('"Interview","Confidence 1:1: '+esc2(data.interview.confidence1to1)+'","","","","","","Interview Form"');
+        if(data.interview.availability)csv.push('"Interview","Availability: '+esc2(data.interview.availability)+'","","","","","","Interview Form"');
+      }
+
+      dl(csv.join('\n'),safeName.replace(/\s+/g,'_')+'_training_record.csv');
+    }).catch(function(e){btn.textContent=orig;btn.disabled=false;alert('Export failed.');});
+  }
+  function esc2(s){return String(s||'').replace(/"/g,'""');}
   function exportSummaryCSV(){
     var f=getFilteredTutors();
     var csv=['"Name","Areas","DBS","Safeguarding","First Aid"'];

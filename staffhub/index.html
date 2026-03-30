@@ -511,10 +511,10 @@
     apiCall('hubauditexport',{names:names}).then(function(d){
       btn.textContent=origText;btn.disabled=false;
       var records=d.records||[];
-      if(!records.length){alert('No training records found for selected tutors.');return;}
-      var csv=['"Name","Email","Category","Training","Date Completed","Score","Result","Certificate No","Certificate Link","Expiry Date","Source"'];
+      if(!records.length){alert('No records found for selected tutors.');return;}
+      var csv=['"Name","Area","Category","Detail","Date","Score","Result","Certificate No","Expiry Date","Source"'];
       records.forEach(function(r){
-        csv.push('"'+r.fullName+'","'+r.email+'","'+r.category+'","'+r.trainingName+'","'+r.dateCompleted+'","'+r.score+'","'+r.passFail+'","'+r.certNumber+'","'+r.certLink+'","'+r.expiryDate+'","'+r.source+'"');
+        csv.push('"'+(r.fullName||'')+'","'+(r.area||'')+'","'+(r.category||'')+'","'+(r.item||'')+'","'+(r.dateCompleted||'')+'","'+(r.score||'')+'","'+(r.passFail||'')+'","'+(r.certNumber||'')+'","'+(r.expiryDate||'')+'","'+(r.source||'')+'"');
       });
       var area=document.getElementById('areaFilter').value||'all';
       dl(csv.join('\n'),'audit_export_'+area+'_'+(compliantOnly?'compliant':'all')+'.csv');

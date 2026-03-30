@@ -284,7 +284,6 @@
     var password=document.getElementById('loginPassword').value;
     showMsg('loginError','');
     if(!email){showMsg('loginError','Please enter your email.');return;}
-    if(!password){showMsg('loginError','Please enter your password.');return;}
     document.getElementById('loginBtn').disabled=true;
     apiCall('hublogin',{email:email,password:password}).then(function(r){
       document.getElementById('loginBtn').disabled=false;

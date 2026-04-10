@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learning Hive – Level 2 Safeguarding Course | KCSIE 2025</title>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--sunshine:#FFDE44;--strawberry:#EF3340;--ocean:#00AFBA;--ocean-dark:#009BA5;--sky:#51BAE8;--candyfloss:#F298BC;--berry:#6F4B99;--black:#1A1A1A;--white:#FFFFFF;--cream:#F5F3F0;--border:#E8E4DF;--gray:#6B7280;--gray-light:#9CA3AF;--green:#10B981;--red:#EF4444;--light-bg:#FAFBFC}
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Nunito',sans-serif;background:var(--light-bg);color:var(--black);line-height:1.7;margin:0;padding:0}
+    h1,h2,h3{font-family:'Baloo 2',sans-serif;color:var(--ocean);line-height:1.3}
+    .hidden{display:none}
+    .container{max-width:920px;margin:0 auto;padding:20px}
+    .header-card{background:var(--white);border-radius:16px 16px 0 0;border:1px solid var(--border);border-bottom:3px solid var(--ocean);padding:20px 28px;display:flex;align-items:center;gap:20px}
+    .header-card img{height:48px;width:auto}
+    .header-card .titles{flex:1}
+    .header-card h1{font-size:1.35rem;margin:0}
+    .header-card .badge{background:var(--berry);color:white;font-size:0.65rem;font-weight:800;padding:4px 14px;border-radius:20px;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
+    .box{border:1px solid var(--border);padding:28px;border-radius:14px;margin-bottom:20px;background:var(--white);box-shadow:0 2px 12px rgba(0,0,0,0.04)}
+    .box.attached{border-top:none;border-radius:0 0 14px 14px;margin-top:-20px}
+    .btn{padding:12px 28px;font-size:1rem;cursor:pointer;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:700;transition:all 0.2s;display:inline-block}
+    .btn-primary{background:var(--ocean);color:white;box-shadow:0 4px 14px rgba(0,175,186,0.3)}
+    .btn-primary:hover{background:var(--ocean-dark);transform:translateY(-1px)}
+    .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+    .btn-secondary{background:var(--white);color:var(--black);border:2px solid var(--border)}
+    .btn-secondary:hover{border-color:var(--ocean)}
+    .status-box{padding:16px 20px;border-radius:10px;margin:12px 0;font-weight:600}
+    .status-info{background:linear-gradient(135deg,#E6F9FA,#CCF3F5);border-left:4px solid var(--ocean)}
+    .status-success{background:linear-gradient(135deg,#D1FAE5,#A7F3D0);border-left:4px solid var(--green);color:#065F46}
+    .status-error{background:linear-gradient(135deg,#FEF0F0,#FDE2E2);border-left:4px solid var(--strawberry);color:#991B1B}
+    .status-warn{background:linear-gradient(135deg,#FFF9E0,#FFF3C4);border-left:4px solid var(--sunshine)}
+    .q-block{border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px}
+    .q-label{font-size:0.7rem;font-weight:800;color:var(--berry);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+    .q-text{font-size:1rem;font-weight:700;margin-bottom:14px}
+    .q-option{display:block;width:100%;text-align:left;background:var(--cream);border:2px solid var(--border);border-radius:10px;padding:11px 16px;margin-bottom:7px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:500;transition:all 0.15s}
+    .q-option:hover{border-color:var(--ocean);background:#E6F9FA}
+    .q-option.selected{border-color:var(--ocean);background:#E6F9FA;font-weight:700}
+    .q-option.correct{border-color:var(--green);background:#D1FAE5;color:#065F46;font-weight:700}
+    .q-option.incorrect{border-color:var(--red);background:#FEE2E2;color:#991B1B;opacity:0.7}
+    .q-option.disabled{pointer-events:none}
+    .q-note{font-size:0.8rem;color:var(--gray);font-style:italic;margin-bottom:10px}
+    .q-link{margin-bottom:12px}
+    .q-link a{color:var(--ocean);font-weight:700;font-size:0.85rem}
+    .score-wrap{text-align:center;padding:32px 20px}
+    .score-circle{width:140px;height:140px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'Baloo 2',sans-serif}
+    .score-circle.pass{background:#D1FAE5;border:4px solid var(--green);color:#065F46}
+    .score-circle.fail{background:#FEE2E2;border:4px solid var(--red);color:#991B1B}
+    .score-circle .num{font-size:2.2rem;line-height:1;font-weight:800}
+    .score-circle .lbl{font-size:0.8rem;opacity:0.7;font-weight:600}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .spinner{width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--ocean);border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;vertical-align:middle}
+    .site-footer{background:var(--black);color:rgba(255,255,255,0.6);text-align:center;padding:32px 32px 28px;font-size:0.85rem}
+    .site-footer img{height:44px;width:auto;margin-bottom:12px}
+    .site-footer .tagline{font-family:'Baloo 2',sans-serif;color:var(--ocean);font-size:1rem;margin-bottom:6px}
+    .site-footer a{color:var(--ocean);text-decoration:none;font-weight:700}
+    .site-footer .copy{margin-top:14px;font-size:0.75rem;opacity:0.5}
+    .rainbow-bar{height:4px;background:linear-gradient(90deg,var(--berry),var(--candyfloss),var(--strawberry),var(--sunshine),var(--ocean),var(--sky));border-radius:2px;margin-bottom:20px}
+    #confettiCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+  </style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- ══ BRANDED VERIFICATION GATE ══ -->
+<div id="loginOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#FAFBFC;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;">
+  <div style="background:#FFFFFF;border-radius:20px;padding:48px;max-width:480px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.12);text-align:center;border:1px solid #E8E4DF;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:24px;">
+      <img class="lh-logo" alt="Learning Hive" style="height:52px;width:auto;">
+      <div style="text-align:left;">
+        <div style="font-family:'Baloo 2',sans-serif;font-size:1.3rem;font-weight:700;color:#1A1A1A;line-height:1.1;">Learning Hive</div>
+        <div style="font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:700;color:#00AFBA;letter-spacing:.5px;">Safeguarding Training</div>
+      </div>
+    </div>
+    <h2 style="font-family:'Baloo 2',sans-serif;color:#00AFBA;font-size:1.5rem;margin-bottom:8px;">Staff Verification</h2>
+    <p style="font-family:'Nunito',sans-serif;color:#6B7280;font-size:.9rem;margin-bottom:24px;">
+      This course is for authorised Learning Hive staff only.<br>
+      Please enter the details you provided in your personal details form.
+    </p>
+    <div id="loginForm">
+      <div style="text-align:left;">
+        <label style="font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:#6F4B99;text-transform:uppercase;letter-spacing:1px;">Full Name</label>
+        <input type="text" id="nameInput" placeholder="As per your personal details form" style="width:100%;padding:12px 16px;border:2px solid #E8E4DF;border-radius:8px;font-family:'Nunito',sans-serif;font-size:1rem;margin:6px 0 16px;outline:none;transition:border-color .2s;box-sizing:border-box;" onfocus="this.style.borderColor='#00AFBA'" onblur="this.style.borderColor='#E8E4DF'">
+        <label style="font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:#6F4B99;text-transform:uppercase;letter-spacing:1px;">Email Address</label>
+        <input type="email" id="emailInput" placeholder="Email provided in your personal details form" autocomplete="email" style="width:100%;padding:12px 16px;border:2px solid #E8E4DF;border-radius:8px;font-family:'Nunito',sans-serif;font-size:1rem;margin:6px 0 24px;outline:none;transition:border-color .2s;box-sizing:border-box;" onfocus="this.style.borderColor='#00AFBA'" onblur="this.style.borderColor='#E8E4DF'" onkeydown="if(event.key==='Enter')checkAccess()">
+      </div>
+      <button onclick="checkAccess()" id="loginBtn" style="background:#00AFBA;color:#fff;border:none;padding:14px 32px;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;width:100%;transition:all .2s;box-shadow:0 4px 12px rgba(0,175,186,.3);" onmouseover="this.style.background='#009BA5'" onmouseout="this.style.background='#00AFBA'">Verify &amp; Start Training</button>
+    </div>
+    <div id="loginLoading" style="margin-top:20px;display:none;align-items:center;justify-content:center;gap:10px;">
+      <span style="display:inline-block;animation:spin 1s linear infinite;font-size:1.2rem;">&#x27F3;</span>
+      <span style="font-family:'Nunito',sans-serif;color:#00AFBA;font-weight:600;font-size:.9rem;">Verifying your account...</span>
+    </div>
+    <div id="loginError" style="margin-top:16px;display:none;">
+      <div style="background:#FEE2E2;border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:12px 16px;text-align:left;margin-bottom:16px;">
+        <strong style="color:#991B1B;font-family:'Nunito',sans-serif;">Access Denied</strong>
+        <p id="loginErrorMsg" style="color:#991B1B;margin-top:4px;font-size:.9rem;font-weight:500;font-family:'Nunito',sans-serif;"></p>
+      </div>
+      <button onclick="showLoginForm()" style="background:#fff;color:#1A1A1A;border:2px solid #E8E4DF;padding:10px 24px;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:.2s;" onmouseover="this.style.borderColor='#00AFBA'" onmouseout="this.style.borderColor='#E8E4DF'">Try Again</button>
+    </div>
+    <div id="loginLocked" style="margin-top:16px;display:none;">
+      <div style="background:#FEE2E2;border-left:4px solid #EF4444;border-radius:0 8px 8px 0;padding:16px;text-align:left;">
+        <strong style="color:#991B1B;font-family:'Nunito',sans-serif;">&#x1F512; Account Locked</strong>
+        <p style="color:#991B1B;margin-top:6px;font-size:.9rem;font-weight:500;font-family:'Nunito',sans-serif;">Your access has been locked after 3 unsuccessful attempts.</p>
+        <p style="color:#991B1B;margin-top:6px;font-size:.9rem;font-weight:500;font-family:'Nunito',sans-serif;">Please contact HR at <a href="mailto:benita@learninghive.co.uk" style="color:#991B1B;font-weight:700;">benita&#64;learninghive.co.uk</a></p>
+      </div>
+    </div>
+    <div id="loginAlreadyPassed" style="margin-top:16px;display:none;">
+      <div class="status-box status-success" style="text-align:left;margin-bottom:16px;">
+        <strong>✓ Training Already Complete</strong>
+        <p style="margin-top:6px;font-weight:500;">Certificate: <strong id="existingCertNo"></strong></p>
+        <p style="font-weight:500;font-size:0.9rem;">Expires: <span id="existingCertExpiry"></span></p>
+      </div>
+      <button class="btn btn-primary" style="margin-top:8px;" onclick="resendCertEmail()" id="resendBtn">📧 Email Me Certificate Again</button>
+      <p id="resendMsg" style="margin-top:12px;font-weight:600;display:none;"></p>
+      <button class="btn btn-secondary" style="margin-left:10px;margin-top:8px;" onclick="dismissOverlay()">Retake Anyway</button>
+    </div>
+    <div id="loginMsg" style="margin-top:16px;display:none;padding:12px;border-radius:8px;font-size:.9rem;font-weight:600;font-family:'Nunito',sans-serif;"></div>
+    <p style="font-family:'Nunito',sans-serif;color:#9CA3AF;font-size:.75rem;margin-top:24px;">Problems accessing the course? Contact <a href="mailto:info@learninghive.co.uk" style="color:#00AFBA;text-decoration:none;font-weight:700;">info&#64;learninghive.co.uk</a></p>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+  <div class="rainbow-bar"></div>
+  <div class="header-card">
+    <img class="lh-logo" alt="Learning Hive">
+    <div class="titles">
+      <h1>Level 2 Safeguarding Course</h1>
+      <p style="color:var(--gray);font-size:0.82rem;font-weight:600;">Level 2 Safeguarding Training</p>
+    </div>
+    <span class="badge">KCSIE 2025</span>
+  </div>
+
+  <div class="box attached" id="videoBox">
+    <h2>Training Video</h2>
+    <p style="margin-bottom:8px;">You must watch the full video before the assessment unlocks.</p>
+    <div class="status-box status-warn" style="margin-bottom:16px;">
+      <p style="font-weight:700;font-size:0.88rem;color:var(--black);">⚠ Skipping or fast-forwarding is not permitted.</p>
+    </div>
+    <div id="player"></div>
+    <p id="videoMsg" style="margin-top:12px;font-weight:600;"></p>
+  </div>
+
+  <div class="box hidden" id="quizBox">
+    <h2>Safeguarding Quiz</h2>
+    <div class="status-box status-info" style="margin-bottom:20px;">
+      <p style="font-weight:700;">You must score <strong>8 or above</strong> to pass. Maximum 3 attempts.</p>
+      <p style="font-weight:500;font-size:0.88rem;margin-top:4px;">You may refer to training materials for support.</p>
+    </div>
+    <p id="attemptInfo" style="color:var(--gray);font-size:0.88rem;margin-bottom:20px;"></p>
+    <div id="quizQuestions"></div>
+    <div style="text-align:center;margin-top:28px;" id="submitArea">
+      <button class="btn btn-primary" onclick="submitQuizToBackend()" id="submitBtn" style="font-size:1.05rem;padding:14px 48px;">Submit Assessment</button>
+      <p id="submittingMsg" class="hidden" style="margin-top:14px;color:var(--gray);"><span class="spinner" style="margin-right:8px;"></span>Submitting...</p>
+    </div>
+    <div id="scoreDisplay" class="hidden">
+      <div class="score-wrap">
+        <div class="score-circle" id="scoreCircle"><div class="num" id="scoreNum"></div><div class="lbl">out of 10</div></div>
+        <h2 id="scoreMsg" style="margin-bottom:6px;"></h2>
+        <p id="scoreSub" style="color:var(--gray);margin-bottom:20px;"></p>
+        <div id="certArea" class="hidden" style="margin-bottom:16px;">
+          <div class="status-box status-success">
+            <strong>✓ Certificate Generated</strong>
+            <p style="margin-top:4px;font-weight:500;">Certificate Number: <strong id="certNo"></strong></p>
+            <p style="margin-top:12px;font-weight:500;">📧 Your certificate has been emailed to <strong id="certEmailDest"></strong></p>
+            <p style="margin-top:4px;font-size:0.88rem;color:#065F46;">Please check your inbox (and spam folder) for an email from Learning Hive with your PDF certificate attached.</p>
+          </div>
+        </div>
+        <button class="btn btn-secondary hidden" id="retakeBtn" onclick="retakeQuiz()">Retake Assessment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <img class="lh-logo" alt="Learning Hive">
+  <div class="tagline">Nurturing potential together</div>
+  <p class="desc">Level 2 Safeguarding Children Training — Aligned with KCSIE 2025</p>
+  <p><a href="https://www.learninghive.co.uk" target="_blank">www.learninghive.co.uk</a></p>
+  <p class="copy">© Learning Hive 2025. All rights reserved.</p>
+</footer>
+
+<script>
+/* ── CONFIGURATION ── */
+var WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyerZUIFzGg3YeaZ0ftFKZY2xNyFjvoV0-OkY0J4rmNlR9C291-_fvZIlcJ3-5Bk4ff/exec";
+var COURSE_NAME = "Safeguarding";
+
+/* ── LOGO (stored once, applied to all img.lh-logo elements) ── */
+var LH_LOGO="data:image/png;base64,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";
+document.addEventListener('DOMContentLoaded',function(){
+  var imgs=document.querySelectorAll('.lh-logo');
+  for(var i=0;i<imgs.length;i++)imgs[i].src=LH_LOGO;
+});
+
+/* ── HELPER: POST to Apps Script (text/plain to avoid CORS preflight) ── */
+function postToBackend(payload) {
+  return fetch(WEBAPP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); });
+}
+
+/* ── STATE ── */
+var tutorData=null, quizToken=null, attemptCount=0, maxAttempts=3;
+var player=null, videoCompleted=false, assessmentAnswers={};
+var maxWatched=0, skipCheckInterval=null;
+var userEmail='', userName='';
+var courseConfig={};
+
+/* ── LOGIN ── */
+function checkAccess(){
+  var name=document.getElementById('nameInput').value.trim();
+  var email=document.getElementById('emailInput').value.trim();
+  if(!name){document.getElementById('loginMsg').style.display='block';document.getElementById('loginMsg').innerHTML='<span style="color:var(--strawberry);">Please enter your full name.</span>';return;}
+  if(!email){document.getElementById('loginMsg').style.display='block';document.getElementById('loginMsg').innerHTML='<span style="color:var(--strawberry);">Please enter your email.</span>';return;}
+  document.getElementById('loginMsg').style.display='none';
+  userEmail=email;
+  userName=name;
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('loginLoading').style.display='flex';
+
+  /* GET verify — enriched response includes config, attempts, video status, cert */
+  var url = WEBAPP_URL + '?action=verify&name=' + encodeURIComponent(name) + '&email=' + encodeURIComponent(email) + '&course=' + encodeURIComponent(COURSE_NAME);
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(handleAccess)
+    .catch(handleAccessErr);
+}
+
+function handleAccess(r){
+  document.getElementById('loginLoading').style.display='none';
+
+  if(!r.success){
+    if(r.locked){document.getElementById('loginLocked').style.display='block';}
+    else{document.getElementById('loginError').style.display='block';document.getElementById('loginErrorMsg').textContent=r.message||'Access denied.';}
+    return;
+  }
+
+  /* Store tutor data */
+  tutorData = r.tutor || { name: userName, email: userEmail };
+  userEmail = tutorData.email || userEmail;
+  userName = tutorData.name || userName;
+
+  /* Store config from enriched response */
+  courseConfig = r.config || {};
+  attemptCount = r.attemptCount || 0;
+  maxAttempts = r.maxAttempts || courseConfig.maxAttempts || 3;
+
+  if(r.videoCompleted){
+    videoCompleted = true;
+  }
+
+  /* Already passed — show cert info */
+  if(r.certificate && r.certificate.certNumber){
+    document.getElementById('loginAlreadyPassed').style.display='block';
+    document.getElementById('existingCertNo').textContent=r.certificate.certNumber;
+    document.getElementById('existingCertExpiry').textContent=r.certificate.expiry || '';
+    return;
+  }
+
+  dismissOverlay();
+}
+
+function handleAccessErr(e){
+  document.getElementById('loginLoading').style.display='none';
+  document.getElementById('loginError').style.display='block';
+  document.getElementById('loginErrorMsg').textContent='Connection error. Please try again.';
+  console.error('Verify error:', e);
+}
+
+function showLoginForm(){
+  document.getElementById('loginError').style.display='none';
+  document.getElementById('loginForm').style.display='block';
+}
+
+function dismissOverlay(){
+  var o=document.getElementById('loginOverlay');
+  o.style.opacity='0';o.style.transition='opacity 0.4s';
+  setTimeout(function(){o.style.display='none';},400);
+
+  /* Log video start if not already completed */
+  if(tutorData && tutorData.email && !videoCompleted){
+    postToBackend({ action: "logvideostart", email: tutorData.email, course: COURSE_NAME })
+      .catch(function(e){ console.error('logvideostart error:', e); });
+  }
+
+  loadPlayer();
+  updateAttemptInfo();
+  restoreProgress();
+
+  if(videoCompleted){
+    document.getElementById('videoMsg').innerHTML='<span style="color:var(--green);">✓ Video previously completed. Assessment unlocked.</span>';
+    document.getElementById('quizBox').classList.remove('hidden');
+  }
+}
+
+function updateAttemptInfo(){
+  var el=document.getElementById('attemptInfo');
+  var remaining=maxAttempts-attemptCount;
+  if(remaining<=0){
+    el.innerHTML='<span style="color:var(--strawberry);font-weight:700;">All '+maxAttempts+' attempts used. Assessment locked.</span>';
+    document.getElementById('submitBtn').disabled=true;
+  } else {
+    el.textContent='Attempts: '+attemptCount+' of '+maxAttempts+' used ('+remaining+' remaining)';
+  }
+}
+
+/* ── PROGRESS PERSISTENCE ── */
+function progressKey(){
+  return userEmail ? 'lh_sg_progress_' + userEmail.toLowerCase().trim() : null;
+}
+
+function saveProgress(){
+  var key = progressKey();
+  if(!key) return;
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      videoCompleted: videoCompleted,
+      quizToken: quizToken,
+      ts: Date.now()
+    }));
+  } catch(e){}
+}
+
+function restoreProgress(){
+  var key = progressKey();
+  if(!key) return;
+  try {
+    var saved = localStorage.getItem(key);
+    if(!saved) return;
+    var data = JSON.parse(saved);
+    if(Date.now() - data.ts > 30*24*60*60*1000){
+      localStorage.removeItem(key);
+      return;
+    }
+    if(data.videoCompleted){
+      videoCompleted = true;
+      if(data.quizToken) quizToken = data.quizToken;
+      document.getElementById('videoMsg').innerHTML = '<span style="color:var(--green);">✓ Video previously completed. Assessment unlocked.</span>';
+      document.getElementById('quizBox').classList.remove('hidden');
+    }
+  } catch(e){}
+}
+
+/* ── VIDEO ── */
+function loadPlayer(){
+  if(!tutorData) return;
+  /* YouTube URL comes from enriched verify response */
+  var url = courseConfig.youtubeUrl || courseConfig['YouTube URL'] || '';
+  var vid = extractYTId(url);
+  if(!vid) return;
+  player=new YT.Player('player',{
+    height:'480',width:'100%',videoId:vid,
+    playerVars:{rel:0,modestbranding:1,disablekb:1,fs:0},
+    events:{'onStateChange':onPlayerState}
+  });
+}
+
+function extractYTId(url){var m=String(url).match(/(?:youtu\.be\/|v=|embed\/|\/v\/)([^#&?]{11})/);return m?m[1]:null;}
+
+function startSkipDetection(){
+  if(skipCheckInterval) return;
+  skipCheckInterval=setInterval(function(){
+    if(!player||!player.getCurrentTime||videoCompleted) return;
+    var c=player.getCurrentTime();
+    if(c>maxWatched+3){player.seekTo(maxWatched,true);document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Skipping is not allowed.</span>';}
+    else if(c>maxWatched){maxWatched=c;}
+  },1000);
+}
+
+function onPlayerState(e){
+  if(e.data===YT.PlayerState.PLAYING) startSkipDetection();
+  if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.BUFFERING){
+    if(player&&player.getCurrentTime){var ct=player.getCurrentTime();if(ct<=maxWatched+3&&ct>maxWatched)maxWatched=ct;}
+  }
+  if(e.data===YT.PlayerState.ENDED&&!videoCompleted){
+    if(skipCheckInterval){clearInterval(skipCheckInterval);skipCheckInterval=null;}
+    var dur=player.getDuration?player.getDuration():0;
+    if(dur>0&&maxWatched<dur*0.9){
+      player.seekTo(maxWatched,true);player.playVideo();
+      document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Please continue watching.</span>';
+      return;
+    }
+    videoCompleted=true;
+    document.getElementById('videoMsg').innerHTML='<span style="color:var(--green);">✓ Video completed. Assessment unlocked.</span>';
+    saveProgress();
+
+    /* Log video complete — returns token for quiz */
+    postToBackend({ action: "logvideocomplete", email: tutorData.email, course: COURSE_NAME })
+      .then(function(r){
+        if(r && r.success && r.token){ quizToken=r.token; saveProgress(); }
+      })
+      .catch(function(e){ console.error('logvideocomplete error:', e); });
+
+    document.getElementById('quizBox').classList.remove('hidden');
+    document.getElementById('quizBox').scrollIntoView({behavior:'smooth'});
+  }
+}
+
+/* ── QUIZ ── */
+var QUESTIONS=[
+{type:'multi',q:'Who is responsible for safeguarding and child protection at Learning Hive? (select all that apply)',opts:['Nayeer Afzal, Designated Safeguarding Lead','Daisy Perkins, Deputy Designated Safeguarding Lead','Tutors working with individual students','The Local Authority Designated Officer (LADO)'],correct:[0,1,2,3]},
+{type:'single',q:'What term describes abuse by other children, including cyberbullying and sexting? (select one)',opts:['Peer on peer abuse','Youth conflict','Peer assisted harm','Child on child abuse','Peer rivalry and discrimination'],correct:3},
+{type:'single',q:"If a child is in immediate danger/serious risk of harm, tutors' first course of action should be: (select one)",opts:["Report to Learning Hive's Designated Safeguarding Lead, Nayeer Afzal",'Submit a Google Form reporting your concerns','Call 999','Call the Multi-Agency Safeguarding Hub (MASH)',"Call the student's parents"],correct:2},
+{type:'single',q:'The following emojis have been associated with teen communications around incel culture and beliefs: (select one)',opts:['Wolf, rocket, black circle, red circle, apple, ghost','Heart eyes, black circle, red circle, pill, fire','Yellow heart, lightning bolt, red circle, black circle','Gun, knife, padlock, red circle, black circle','Lipstick, doughnut, red circle, black circle, blue heart'],correct:0},
+{type:'confirm',q:'Please confirm you have read and understood Part One of Keeping Children Safe in Education (2025), linked below:',link:'https://assets.publishing.service.gov.uk/media/68b02d1efef950b0909c1734/Keeping_children_safe_in_education_2025_part_one_Information_for_school_college_staff.pdf',opts:['Yes','No'],correct:0},
+{type:'single',q:'In order to ensure children grow up in safe, effective and supportive environments, KCSiE emphasises: (select one)',opts:['Early identification of risks and timely intervention',"Multi-agency cooperation to ensure children's health and development are not impaired",'A shared responsibility amongst all staff working with children and young people to provide safe and nurturing care','None of the above','All of the above'],correct:4},
+{type:'single',q:"What are the 4 R's of safeguarding? (select one)",opts:['Realise, Respond, Record, Report','Recognise, Respond, Record, Report','Recognise, Reassure, Report, React','Realise, React, Record, Report'],correct:1},
+{type:'single',q:"The term 'Child Sexual Exploitation' refers to a situation where a child under the legal age of sexual consent (0-16 years) has been coerced into engaging in sexual activity. (select one)",opts:['True','False'],correct:1},
+{type:'multi',q:'Which of the following can be considered forms of child-on-child abuse? (select all that apply)',opts:['Bullying','Upskirting','Sexual-related jokes','Online threats','Physical assault','Consensual sharing of nude or semi-nude photos','Hazing rituals'],correct:[0,1,2,3,4,5,6]},
+{type:'single',q:'What are the four main categories of abuse? (select one)',opts:['Emotional, social, sexual, physical','Domestic violence, emotional, sexual, child grooming','Physical, emotional, sexual, radicalisation','Child on child, physical, emotional, sexual','Physical, emotional, sexual, neglect'],correct:4}
+];
+
+function buildQuiz(){
+  var c=document.getElementById('quizQuestions');c.innerHTML='';assessmentAnswers={};
+  QUESTIONS.forEach(function(q,qi){
+    var html='<div class="q-block" id="qb'+qi+'"><div class="q-label">Question '+(qi+1)+' of 10</div><div class="q-text">'+q.q+'</div>';
+    if(q.type==='multi') html+='<div class="q-note">Select all that apply</div>';
+    if(q.link) html+='<div class="q-link"><a href="'+q.link+'" target="_blank">Read KCSIE 2025 Part One →</a></div>';
+    q.opts.forEach(function(opt,oi){html+='<button class="q-option" data-qi="'+qi+'" data-oi="'+oi+'" onclick="selectAnswer('+qi+','+oi+',this)">'+opt+'</button>';});
+    html+='</div>';c.innerHTML+=html;
+  });
+}
+
+function selectAnswer(qi,oi,btn){
+  var q=QUESTIONS[qi];
+  if(q.type==='multi'){
+    if(!assessmentAnswers[qi]) assessmentAnswers[qi]=[];
+    var idx=assessmentAnswers[qi].indexOf(oi);
+    if(idx>-1){assessmentAnswers[qi].splice(idx,1);btn.classList.remove('selected');}
+    else{assessmentAnswers[qi].push(oi);btn.classList.add('selected');}
+  } else {
+    assessmentAnswers[qi]=oi;
+    document.getElementById('qb'+qi).querySelectorAll('.q-option').forEach(function(o){o.classList.remove('selected');});
+    btn.classList.add('selected');
+  }
+}
+
+/* ── SUBMIT (server-side scoring via submitquiz doPost action) ── */
+function submitQuizToBackend(){
+  for(var i=0;i<10;i++){
+    if(assessmentAnswers[i]===undefined||assessmentAnswers[i]===null||(Array.isArray(assessmentAnswers[i])&&assessmentAnswers[i].length===0)){
+      alert('Please answer question '+(i+1)+'.');
+      document.getElementById('qb'+i).scrollIntoView({behavior:'smooth'});
+      return;
+    }
+  }
+  if(attemptCount>=maxAttempts){alert('All attempts used.');return;}
+
+  document.getElementById('submitBtn').disabled=true;
+  document.getElementById('submittingMsg').classList.remove('hidden');
+
+  /* If no quiz token yet, request one via logvideocomplete first */
+  if(!quizToken){
+    postToBackend({ action: "logvideostart", email: tutorData.email, course: COURSE_NAME })
+      .then(function(){
+        return postToBackend({ action: "logvideocomplete", email: tutorData.email, course: COURSE_NAME });
+      })
+      .then(function(r){
+        if(r && r.success){ quizToken=r.token; doSubmit(); }
+        else { alert(r.message||'Token error.'); resetSubmit(); }
+      })
+      .catch(function(e){ alert('Error: '+e.message); resetSubmit(); });
+    return;
+  }
+  doSubmit();
+}
+
+function doSubmit(){
+  postToBackend({
+    action: "submitquiz",
+    email: tutorData.email,
+    course: COURSE_NAME,
+    token: quizToken,
+    answers: assessmentAnswers
+  })
+  .then(handleResult)
+  .catch(function(e){ alert('Error: '+(e.message||'Connection failed')); resetSubmit(); });
+}
+
+function resetSubmit(){
+  document.getElementById('submitBtn').disabled=false;
+  document.getElementById('submittingMsg').classList.add('hidden');
+}
+
+function handleResult(r){
+  document.getElementById('submittingMsg').classList.add('hidden');
+  if(!r.success){alert(r.message||'Failed.');resetSubmit();return;}
+  if(r.attemptNumber) attemptCount=r.attemptNumber;
+
+  var passed = r.passFail==='PASS';
+  var score = r.correct || Math.round(r.score/10);
+
+  /* Show correct/incorrect on questions if passed */
+  if(passed){
+    QUESTIONS.forEach(function(q,qi){
+      document.getElementById('qb'+qi).querySelectorAll('.q-option').forEach(function(btn){
+        var oi=parseInt(btn.dataset.oi); btn.classList.add('disabled');
+        if(q.type==='multi'){
+          if(q.correct.indexOf(oi)>-1) btn.classList.add('correct');
+          if((assessmentAnswers[qi]||[]).indexOf(oi)>-1&&q.correct.indexOf(oi)===-1) btn.classList.add('incorrect');
+        } else {
+          if(oi===q.correct) btn.classList.add('correct');
+          if(oi===assessmentAnswers[qi]&&oi!==q.correct) btn.classList.add('incorrect');
+        }
+      });
+    });
+  }
+
+  document.getElementById('submitArea').classList.add('hidden');
+  document.getElementById('scoreDisplay').classList.remove('hidden');
+  document.getElementById('scoreCircle').className='score-circle '+(passed?'pass':'fail');
+  document.getElementById('scoreNum').textContent=score;
+  document.getElementById('scoreMsg').textContent=passed?'Congratulations — You Passed!':'Not Quite — Try Again';
+
+  var sub='You scored '+(r.score||score*10)+'%. ';
+  if(passed){sub+='Pass mark met.';}
+  else{sub+='You need 80% (8/10).';if(r.attemptsRemaining!==undefined)sub+=' Attempts remaining: '+r.attemptsRemaining;}
+  document.getElementById('scoreSub').textContent=sub;
+
+  if(passed){
+    launchConfetti();
+    setTimeout(function(){
+      if(r.certNumber&&r.certNumber!=='PENDING'){
+        document.getElementById('certArea').classList.remove('hidden');
+        document.getElementById('certNo').textContent=r.certNumber;
+        document.getElementById('certEmailDest').textContent=tutorData.email;
+      } else if(r.certNumber==='PENDING'){
+        document.getElementById('certArea').classList.remove('hidden');
+        document.getElementById('certNo').textContent='Processing...';
+        document.getElementById('certEmailDest').textContent=tutorData.email;
+      }
+    },2500);
+  }
+
+  if(!passed){
+    var remaining=r.attemptsRemaining||(maxAttempts-attemptCount);
+    if(remaining>0) document.getElementById('retakeBtn').classList.remove('hidden');
+    else {
+      var p=document.createElement('p');
+      p.style.cssText='color:var(--strawberry);font-weight:700;margin-top:12px;';
+      p.textContent='No attempts remaining. Please contact HR at benita@learninghive.co.uk.';
+      document.getElementById('scoreDisplay').querySelector('.score-wrap').appendChild(p);
+    }
+  }
+  document.getElementById('scoreDisplay').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── RESEND CERTIFICATE ── */
+function resendCertEmail(){
+  document.getElementById('resendBtn').disabled=true;
+  document.getElementById('resendMsg').style.display='block';
+  document.getElementById('resendMsg').innerHTML='<span class="spinner" style="margin-right:8px;"></span>Sending...';
+
+  postToBackend({ action: "resendcertificate", email: userEmail, course: COURSE_NAME })
+    .then(function(r){
+      if(r.success){
+        document.getElementById('resendMsg').innerHTML='<span style="color:var(--green);">✓ Certificate emailed to '+userEmail+'</span>';
+      } else {
+        document.getElementById('resendMsg').innerHTML='<span style="color:var(--strawberry);">Failed to send. Please try again.</span>';
+        document.getElementById('resendBtn').disabled=false;
+      }
+    })
+    .catch(function(e){
+      document.getElementById('resendMsg').innerHTML='<span style="color:var(--strawberry);">Error: '+(e.message||'Connection failed')+'</span>';
+      document.getElementById('resendBtn').disabled=false;
+    });
+}
+
+/* ── RETAKE ── */
+function retakeQuiz(){
+  document.getElementById('scoreDisplay').classList.add('hidden');
+  document.getElementById('submitArea').classList.remove('hidden');
+  document.getElementById('submitBtn').disabled=false;
+  document.getElementById('retakeBtn').classList.add('hidden');
+  buildQuiz();
+  updateAttemptInfo();
+  document.getElementById('quizBox').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── CONFETTI ── */
+function launchConfetti(){
+  var canvas=document.getElementById('confettiCanvas');var ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  var colors=['#FFDE44','#EF3340','#00AFBA','#51BAE8','#F298BC','#6F4B99','#10B981'];var pieces=[];
+  for(var i=0;i<200;i++){pieces.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,w:Math.random()*10+5,h:Math.random()*6+3,color:colors[Math.floor(Math.random()*colors.length)],vy:Math.random()*4+2,vx:(Math.random()-0.5)*3,rot:Math.random()*360,rv:(Math.random()-0.5)*8,opacity:1});}
+  var frame=0,maxFrames=180;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);var alive=false;
+    pieces.forEach(function(p){if(p.opacity<=0)return;alive=true;p.y+=p.vy;p.x+=p.vx;p.rot+=p.rv;if(frame>maxFrames*0.6)p.opacity-=0.015;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.globalAlpha=Math.max(0,p.opacity);ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+    frame++;if(alive&&frame<maxFrames+60)requestAnimationFrame(draw);else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+/* ── INIT ── */
+buildQuiz();
+</script>
+</body>
+</html>

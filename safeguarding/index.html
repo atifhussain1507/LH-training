@@ -349,34 +349,84 @@ function loadPlayer(){
   if(!vid) return;
   player=new YT.Player('player',{
     height:'480',width:'100%',videoId:vid,
-    playerVars:{rel:0,modestbranding:1,disablekb:1,fs:0},
-    events:{'onStateChange':onPlayerState}
+    playerVars:{rel:0,modestbranding:1,disablekb:1,fs:0,controls:1},
+    events:{
+      'onStateChange':onPlayerState,
+      'onPlaybackRateChange':function(e){
+        /* Force 1x speed — no fast-forwarding via playback rate */
+        if(e.data!==1 && player && player.setPlaybackRate){
+          player.setPlaybackRate(1);
+          document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Playback speed changes are not allowed. Speed reset to 1x.</span>';
+        }
+      }
+    }
   });
 }
 
 function extractYTId(url){var m=String(url).match(/(?:youtu\.be\/|v=|embed\/|\/v\/)([^#&?]{11})/);return m?m[1]:null;}
+
+var lastPolledTime=0, seekingBack=false;
 
 function startSkipDetection(){
   if(skipCheckInterval) return;
   skipCheckInterval=setInterval(function(){
     if(!player||!player.getCurrentTime||videoCompleted) return;
     var c=player.getCurrentTime();
-    if(c>maxWatched+3){player.seekTo(maxWatched,true);document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Skipping is not allowed.</span>';}
-    else if(c>maxWatched){maxWatched=c;}
-  },1000);
+    /* If currently seeking back to maxWatched, don't update anything */
+    if(seekingBack){ return; }
+    /* Detect forward skip: if current time jumped ahead of what they've watched */
+    if(c>maxWatched+2){
+      seekingBack=true;
+      player.seekTo(maxWatched,true);
+      document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Skipping is not allowed. You have been returned to where you left off.</span>';
+      setTimeout(function(){ seekingBack=false; },1500);
+    } else if(c>maxWatched){
+      maxWatched=c;
+    }
+    /* Allow rewinding freely — no penalty for going backwards */
+    lastPolledTime=c;
+  },400);
 }
 
 function onPlayerState(e){
-  if(e.data===YT.PlayerState.PLAYING) startSkipDetection();
+  if(e.data===YT.PlayerState.PLAYING){
+    startSkipDetection();
+    /* Force playback rate to 1x every time play resumes */
+    if(player&&player.getPlaybackRate&&player.getPlaybackRate()!==1){
+      player.setPlaybackRate(1);
+    }
+    /* Catch forward skips on play resume (e.g. user paused, dragged, then played) */
+    if(!seekingBack && player&&player.getCurrentTime){
+      var c=player.getCurrentTime();
+      if(c>maxWatched+2){
+        seekingBack=true;
+        player.seekTo(maxWatched,true);
+        document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Skipping is not allowed. You have been returned to where you left off.</span>';
+        setTimeout(function(){ seekingBack=false; },1500);
+      }
+    }
+  }
   if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.BUFFERING){
-    if(player&&player.getCurrentTime){var ct=player.getCurrentTime();if(ct<=maxWatched+3&&ct>maxWatched)maxWatched=ct;}
+    if(!seekingBack && player&&player.getCurrentTime){
+      var ct=player.getCurrentTime();
+      if(ct>maxWatched+2){
+        /* They paused/buffered at a skipped-to position — snap back */
+        seekingBack=true;
+        player.seekTo(maxWatched,true);
+        setTimeout(function(){ seekingBack=false; },1500);
+      } else if(ct>maxWatched){
+        maxWatched=ct;
+      }
+    }
   }
   if(e.data===YT.PlayerState.ENDED&&!videoCompleted){
     if(skipCheckInterval){clearInterval(skipCheckInterval);skipCheckInterval=null;}
     var dur=player.getDuration?player.getDuration():0;
     if(dur>0&&maxWatched<dur*0.9){
+      seekingBack=true;
       player.seekTo(maxWatched,true);player.playVideo();
-      document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Please continue watching.</span>';
+      document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Please continue watching — you have not completed enough of the video.</span>';
+      setTimeout(function(){ seekingBack=false; },1500);
       return;
     }
     videoCompleted=true;

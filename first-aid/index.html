@@ -1005,12 +1005,12 @@ function verifyUser() {
       btn.disabled = false;
       btn.textContent = 'Verify & Start Training';
 
-      if (data.authorised) {
+      if (data.success || data.authorised) {
         verifiedUser = { name: data.name || name, email: data.email || email };
         msgEl.style.display = 'block';
         msgEl.style.background = '#D1FAE5';
         msgEl.style.color = '#065F46';
-        msgEl.textContent = '\u2713 ' + data.message;
+        msgEl.textContent = '\u2713 ' + (data.message || 'Access granted. Loading course...');
 
         setTimeout(() => {
           const gate = document.getElementById('verifyGate');

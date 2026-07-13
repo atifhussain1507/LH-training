@@ -484,7 +484,7 @@ function onPlayerState(e){
     /* Log video complete  returns token for quiz */
     postToBackend({ action: "logvideocomplete", email: tutorData.email, course: COURSE_NAME })
       .then(function(r){
-        if(r && r.success && r.token){ quizToken=r.token; saveProgress(); }
+        if(r && r.success && r.token){ quizToken=r.token; saveProgress(); saveSession(); }
       })
       .catch(function(e){ console.error('logvideocomplete error:', e); });
 
@@ -581,7 +581,7 @@ function resetSubmit(){
 
 function handleResult(r){
   document.getElementById('submittingMsg').classList.add('hidden');
-  if(!r.success){alert(r.message||'Failed.');resetSubmit();return;}
+  if(!r.success){quizToken=null;saveSession();alert(r.message||'Failed.');resetSubmit();return;}
   if(r.attemptNumber) attemptCount=r.attemptNumber;
   saveSession();
 

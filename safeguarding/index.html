@@ -205,6 +205,11 @@ var maxWatched=0, skipCheckInterval=null;
 var userEmail='', userName='';
 var courseConfig={};
 
+/* ── YOUTUBE API READINESS ── */
+window.onYouTubeIframeAPIReady = function() {
+  if(tutorData && !player) loadPlayer();
+};
+
 /* ── LOGIN ── */
 function checkAccess(){
   var name=document.getElementById('nameInput').value.trim();
@@ -282,7 +287,8 @@ function dismissOverlay(){
       .catch(function(e){ console.error('logvideostart error:', e); });
   }
 
-  loadPlayer();
+  if(typeof YT !== 'undefined' && YT.Player) loadPlayer();
+  /* else onYouTubeIframeAPIReady will call loadPlayer() once the API is ready */
   updateAttemptInfo();
   restoreProgress();
 
@@ -376,7 +382,8 @@ function tryRestoreSession() {
     videoCompleted = data.videoCompleted || false;
     var o = document.getElementById('loginOverlay');
     o.style.display = 'none';
-    loadPlayer();
+    if(typeof YT !== 'undefined' && YT.Player) loadPlayer();
+    /* else onYouTubeIframeAPIReady will call loadPlayer() once the API is ready */
     updateAttemptInfo();
     restoreProgress();
     if (videoCompleted) {
@@ -390,6 +397,7 @@ function tryRestoreSession() {
 /* ── VIDEO ── */
 function loadPlayer(){
   if(!tutorData) return;
+  if(player) return;
   /* YouTube URL comes from enriched verify response */
   var url = courseConfig.youtubeUrl || courseConfig['YouTube URL'] || '';
   var vid = extractYTId(url);

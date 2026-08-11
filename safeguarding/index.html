@@ -115,6 +115,15 @@
       <button class="btn btn-primary" style="margin-top:8px;" onclick="resendCertEmail()" id="resendBtn">📧 Email Me Certificate Again</button>
       <p id="resendMsg" style="margin-top:12px;font-weight:600;display:none;"></p>
       <button class="btn btn-secondary" style="margin-left:10px;margin-top:8px;" onclick="dismissOverlay()">Retake Anyway</button>
+      <div id="passedHistory"></div>
+    </div>
+    <div id="loginRefresherDue" style="margin-top:16px;display:none;text-align:left;">
+      <div style="background:#FFF9E0;border-left:4px solid #FFDE44;border-radius:0 8px 8px 0;padding:16px;">
+        <strong style="color:#92400E;font-family:'Nunito',sans-serif;">&#8635; Annual refresher due</strong>
+        <p id="refresherDueText" style="color:#92400E;margin-top:6px;font-size:.9rem;font-weight:500;font-family:'Nunito',sans-serif;"></p>
+      </div>
+      <div id="refresherHistory"></div>
+      <button class="btn btn-primary" style="margin-top:16px;width:100%;" onclick="dismissOverlay()">Start Refresher</button>
     </div>
     <div id="loginMsg" style="margin-top:16px;display:none;padding:12px;border-radius:8px;font-size:.9rem;font-weight:600;font-family:'Nunito',sans-serif;"></div>
     <p style="font-family:'Nunito',sans-serif;color:#9CA3AF;font-size:.75rem;margin-top:24px;">Problems accessing the course? Contact <a href="mailto:info@learninghive.co.uk" style="color:#00AFBA;text-decoration:none;font-weight:700;">info&#64;learninghive.co.uk</a></p>
@@ -279,15 +288,52 @@ function handleAccess(r){
     videoCompleted = true;
   }
 
-  /* Already passed — show cert info */
+  var history = r.certificateHistory || [];
+
+  /* Current cycle complete — show cert info + history */
   if(r.certificate && r.certificate.certNumber){
     document.getElementById('loginAlreadyPassed').style.display='block';
     document.getElementById('existingCertNo').textContent=r.certificate.certNumber;
     document.getElementById('existingCertExpiry').textContent=r.certificate.expiry || '';
+    renderCertHistory(history, 'passedHistory');
+    return;
+  }
+
+  /* Previous training on record but refresher due — interstitial */
+  if(history.length){
+    document.getElementById('loginRefresherDue').style.display='block';
+    document.getElementById('refresherDueText').textContent=
+      'KCSIE ' + KCSIE_YEAR + ' update \u2014 please complete the course again to renew your training. Your previous certificates remain on record.';
+    renderCertHistory(history, 'refresherHistory');
     return;
   }
 
   dismissOverlay();
+}
+
+/* ── CERTIFICATE HISTORY LIST ── */
+function renderCertHistory(list, containerId){
+  var el = document.getElementById(containerId);
+  if(!el) return;
+  if(!list || !list.length){ el.innerHTML=''; return; }
+  var chips = {
+    current:   'background:#D1FAE5;color:#065F46;',
+    onrecord:  'background:#E6F9FA;color:#006A72;',
+    expired:   'background:#F3F4F6;color:#6B7280;'
+  };
+  var labels = { current:'Current', onrecord:'On record', expired:'Expired' };
+  var h = '<p style="font-family:\'Nunito\',sans-serif;font-weight:700;font-size:.85rem;margin:16px 0 8px;color:var(--black);">Your training history</p>'
+        + '<div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">';
+  for(var i=0;i<list.length;i++){
+    var c=list[i], st=chips[c.status]||chips.expired, lb=labels[c.status]||'Expired';
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;'
+       + (i<list.length-1?'border-bottom:1px solid var(--border);':'') + '">'
+       + '<div style="text-align:left;"><div style="font-family:\'Nunito\',sans-serif;font-weight:700;font-size:.85rem;color:var(--black);">' + String(c.certNumber||'') + '</div>'
+       + '<div style="font-family:\'Nunito\',sans-serif;font-size:.78rem;color:var(--gray);">' + String(c.issued||'?') + ' \u2013 ' + String(c.expiry||'?') + '</div></div>'
+       + '<span style="font-family:\'Nunito\',sans-serif;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px;' + st + '">' + lb + '</span>'
+       + '</div>';
+  }
+  el.innerHTML = h + '</div>';
 }
 
 function handleAccessErr(e){

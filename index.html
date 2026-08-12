@@ -46,7 +46,7 @@ body{font-family:'Nunito',sans-serif;background:#FAFBFC;color:#1A1A1A;min-height
 <div class="icon sg">🛡️</div>
 <div class="info">
 <h3>Level 2 Safeguarding Children Course</h3>
-<p>KCSIE 2025 aligned. Video-based course with CPD-approved assessment. Certificate valid 12 months.</p>
+<p id="sgDesc">Video-based course with CPD-approved assessment. Certificate valid 12 months.</p>
 </div>
 <span class="badge live">Live</span>
 </div>
@@ -65,7 +65,17 @@ body{font-family:'Nunito',sans-serif;background:#FAFBFC;color:#1A1A1A;min-height
 <div class="footer">
 <div class="tagline">Nurturing potential together</div>
 <p><a href="https://www.learninghive.co.uk" target="_blank">www.learninghive.co.uk</a></p>
-<p class="copy">© Learning Hive 2025. All rights reserved.</p>
+<p class="copy" id="copyYear">© Learning Hive. All rights reserved.</p>
 </div>
+<script>
+/* KCSIE VERSION - update this one line every September to match the
+   KCSIE_YEAR constant in safeguarding/index.html */
+var KCSIE_YEAR = "2026";
+
+document.getElementById("sgDesc").textContent =
+  "KCSIE " + KCSIE_YEAR + " aligned. Video-based course with CPD-approved assessment. Certificate valid 12 months.";
+document.getElementById("copyYear").textContent =
+  "© Learning Hive " + new Date().getFullYear() + ". All rights reserved.";
+</script>
 </body>
 </html>

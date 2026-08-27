@@ -1263,7 +1263,11 @@ function stopReveal(){
 function canAccessModule(n){
   if(n===1) return true;
   if(n===13) return aPass;
-  return done.has(n-1);
+  /* The module a tutor is currently on counts as complete for the purpose of
+     moving ONE step forward. Without this, Module 1 is never added to `done`
+     (that only happens on the way out of gm) and every tutor is deadlocked
+     on it. Skipping ahead is still blocked. */
+  return done.has(n-1) || n === cm + 1;
 }
 
 function bS(){

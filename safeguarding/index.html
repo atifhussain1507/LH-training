@@ -237,6 +237,8 @@ function postToBackend(payload) {
 var tutorData=null, quizToken=null, attemptCount=0, maxAttempts=3;
 var player=null, videoCompleted=false, assessmentAnswers={};
 var maxWatched=0, skipCheckInterval=null;
+var resumePosition=0, lastServerSave=0, serverSaveInterval=null;
+var SERVER_SAVE_EVERY_MS = 120000; /* write progress to the sheet every 2 minutes */
 var userEmail='', userName='';
 var courseConfig={};
 
@@ -273,6 +275,9 @@ function handleAccess(r){
     else{document.getElementById('loginError').style.display='block';document.getElementById('loginErrorMsg').textContent=r.message||'Access denied.';}
     return;
   }
+
+  /* Furthest point reached on ANY device, from the sheet */
+  if(r.videoPosition && r.videoPosition > resumePosition) resumePosition = r.videoPosition;
 
   /* Store tutor data */
   tutorData = r.tutor || { name: userName, email: userEmail };
@@ -395,6 +400,7 @@ function saveProgress(){
     localStorage.setItem(key, JSON.stringify({
       videoCompleted: videoCompleted,
       quizToken: quizToken,
+      maxWatched: maxWatched,
       ts: Date.now()
     }));
   } catch(e){}
@@ -416,6 +422,9 @@ function restoreProgress(){
       if(data.quizToken) quizToken = data.quizToken;
       document.getElementById('videoMsg').innerHTML = '<span style="color:var(--green);">✓ Video previously completed. Assessment unlocked.</span>';
       document.getElementById('quizBox').classList.remove('hidden');
+    } else if(data.maxWatched > 0){
+      /* Part way through — remember how far they got so the player can resume */
+      if(data.maxWatched > resumePosition) resumePosition = data.maxWatched;
     }
   } catch(e){}
 }
@@ -481,6 +490,7 @@ function loadPlayer(){
     height:'480',width:'100%',videoId:vid,
     playerVars:{rel:0,modestbranding:1,disablekb:1,fs:0,controls:1},
     events:{
+      'onReady':onPlayerReady,
       'onStateChange':onPlayerState,
       'onPlaybackRateChange':function(e){
         /* Force 1x speed — no fast-forwarding via playback rate */
@@ -493,29 +503,80 @@ function loadPlayer(){
   });
 }
 
+function onPlayerReady(){
+  if(videoCompleted || !(resumePosition > 5)) return;
+  /* Credit what they have already watched and drop them back there */
+  maxWatched = resumePosition;
+  try { player.seekTo(resumePosition, true); } catch(e){}
+  var mins = Math.floor(resumePosition/60), secs = Math.round(resumePosition%60);
+  document.getElementById('videoMsg').innerHTML =
+    '<span style="color:var(--ocean);font-weight:600;">\u21BA Resuming from ' + mins + 'm ' +
+    (secs<10?'0':'') + secs + 's \u2014 your progress was saved.</span>';
+}
+
+/* Write the current position to the sheet so progress survives a closed tab,
+   a flat battery, or a switch to another device. Throttled — never more than
+   one write per SERVER_SAVE_EVERY_MS. */
+function saveProgressToServer(force){
+  if(videoCompleted || !tutorData || !(maxWatched > 5)) return;
+  var now = Date.now();
+  if(!force && now - lastServerSave < SERVER_SAVE_EVERY_MS) return;
+  lastServerSave = now;
+  postToBackend({
+    action: "logvideoprogress",
+    email: tutorData.email,
+    course: COURSE_NAME,
+    position: Math.round(maxWatched)
+  }).catch(function(e){ console.error('logvideoprogress error:', e); });
+}
+
+function startServerSaving(){
+  if(serverSaveInterval) return;
+  serverSaveInterval = setInterval(function(){ saveProgressToServer(false); }, 30000);
+}
+
+/* Last-gasp save when the tab is hidden or closed */
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden'){ saveProgress(); saveProgressToServer(true); }
+});
+window.addEventListener('pagehide', function(){ saveProgress(); saveProgressToServer(true); });
+
 function extractYTId(url){var m=String(url).match(/(?:youtu\.be\/|v=|embed\/|\/v\/)([^#&?]{11})/);return m?m[1]:null;}
 
-var lastPolledTime=0, seekingBack=false;
+var lastPolledTime=0, seekingBack=false, lastPollWall=0;
 
 function startSkipDetection(){
   if(skipCheckInterval) return;
+  lastPollWall = Date.now();
   skipCheckInterval=setInterval(function(){
     if(!player||!player.getCurrentTime||videoCompleted) return;
+    var now=Date.now();
     var c=player.getCurrentTime();
     /* If currently seeking back to maxWatched, don't update anything */
-    if(seekingBack){ return; }
-    /* Detect forward skip: if current time jumped ahead of what they've watched */
-    if(c>maxWatched+2){
+    if(seekingBack){ lastPollWall=now; lastPolledTime=c; return; }
+    /* Compare video time against WALL-CLOCK time, not against a fixed 2s.
+       Browsers throttle timers in background tabs (to roughly once a minute,
+       and they freeze entirely after a few minutes) while the video keeps
+       playing. Under a fixed threshold that looked identical to skipping and
+       tutors were snapped backwards for doing nothing wrong. Real playback
+       can never advance faster than real time; a seek advances video time
+       with no real time passing, so it is still caught. */
+    var wallGap = (now - lastPollWall)/1000;
+    lastPollWall = now;
+    var allowance = wallGap + 2;
+    if(c>maxWatched+allowance){
       seekingBack=true;
       player.seekTo(maxWatched,true);
       document.getElementById('videoMsg').innerHTML='<span style="color:var(--strawberry);font-weight:600;">⚠ Skipping is not allowed. You have been returned to where you left off.</span>';
       setTimeout(function(){ seekingBack=false; },1500);
     } else if(c>maxWatched){
       maxWatched=c;
+      saveProgress();
     }
     /* Allow rewinding freely — no penalty for going backwards */
     lastPolledTime=c;
   },400);
+  startServerSaving();
 }
 
 function onPlayerState(e){
@@ -547,6 +608,8 @@ function onPlayerState(e){
       } else if(ct>maxWatched){
         maxWatched=ct;
       }
+      saveProgress();
+      saveProgressToServer(true);
     }
   }
   if(e.data===YT.PlayerState.ENDED&&!videoCompleted){

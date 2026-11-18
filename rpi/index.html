@@ -174,14 +174,13 @@
     <div class="notice">
       <h3>What this programme is, and is not</h3>
       <p>This is Learning Hive's internal awareness and de-escalation induction. It is not practical restraint training. It is not CPD accredited, regulated or externally certified. No holds are taught or authorised.</p>
-      <p>Completing it does not qualify or authorise you to use restraint or force. You must not work unsupervised until your manager has signed you off.</p>
+      <p>Completing it does not qualify or authorise you to use restraint or force. You must pass the assessment before you start tuition.</p>
     </div>
     <h2>How to complete it</h2>
     <ol class="steps">
       <li>Watch all 11 modules<small>About 39 minutes. Have the current LH RPI Policy v1.2 available. Pause the video whenever you need more time to reflect.</small></li>
       <li>Pass the knowledge assessment<small>15 questions. You need 12 or more correct (80%).</small></li>
       <li>Sign the staff declaration<small>Signed in this portal when you submit the assessment.</small></li>
-      <li class="offline">Manager-assessed scenarios and sign-off<small>Required. Completed with your manager outside this portal: three scenarios relevant to your role, at least 8 out of 10 each, with no critical safety failure.</small></li>
     </ol>
   </div>
 
@@ -244,11 +243,11 @@
               <tr><td>Knowledge assessment</td><td id="recScore"></td></tr>
               <tr><td>Declaration</td><td id="recDecl"></td></tr>
               <tr><td>Refresher due</td><td id="recDue"></td></tr>
-              <tr><td>Status</td><td><strong>Awaiting manager-assessed scenarios and sign-off</strong></td></tr>
+              <tr><td>Status</td><td><strong>Complete</strong></td></tr>
             </table>
             <p style="margin-top:8px;font-size:0.88rem;font-weight:500;">A copy has been emailed to <strong id="recEmail"></strong>.</p>
           </div>
-          <div class="must">Required next step: your manager will complete three assessed scenarios with you and sign off your training. You must not work unsupervised until they have done so.</div>
+          <div class="must">Before each new placement: read the pupil’s risk assessment, discuss it with Learning Hive and sign your confirmation before tuition starts.</div>
           <p style="margin-top:12px;font-size:0.85rem;color:var(--gray);">This is an internal training record, not a certificate. It is not CPD accredited, regulated or externally certified, and it is not practical restraint training. It does not authorise the use of restraint or force.</p>
         </div>
         <button class="btn btn-secondary hidden" id="retakeBtn" onclick="retakeQuiz()">Start a new attempt</button>
@@ -347,7 +346,7 @@ function handleAccess(r){
     document.getElementById('existingRef').textContent=rec.ref||'';
     document.getElementById('existingDate').textContent=rec.completed||'';
     document.getElementById('existingDue').textContent=rec.refresherDue||'';
-    document.getElementById('existingStatus').textContent=rec.status||'Awaiting manager sign-off';
+    document.getElementById('existingStatus').textContent=(!rec.status||/^Awaiting/i.test(rec.status))?'Complete':rec.status;
     renderHistory(history,'doneHistory');
     return;
   }
@@ -585,7 +584,7 @@ function onPlayerState(e){
    Learner copy only: the answer key is held and marked server-side (Code.gs),
    as the training package requires. "m" is the module to review if a question is answered incorrectly. */
 var QUESTIONS=[
-{m:1, q:'Which statement describes completing this training?', opts:['It certifies practical restraint competence.','It grants school staff powers.','It shows you have completed awareness learning, subject to assessment and sign-off.','It allows a tutor to practise holds with a parent.']},
+{m:1, q:'Which statement describes completing this training?', opts:['It certifies practical restraint competence.','It grants school staff powers.','It shows you have completed awareness training. It is not practical restraint training.','It allows a tutor to practise holds with a parent.']},
 {m:1, q:'Which action can count as a restrictive intervention without touch?', opts:['Offering a freely chosen break.','Standing across the only exit so the learner cannot leave.','Moving a worksheet out of the way.','Speaking more quietly.']},
 {m:2, q:'The risk assessment you receive says “ASD and anxiety” but gives no useful information about risk. What should you do?', opts:['Assume the risk is low because no incident is listed.','Assume the risk is high because the pupil has SEND.','Start tuition and gather information as you go.','Ask Learning Hive for the missing information before the first session.']},
 {m:3, q:'What is an appropriate early de-escalation response?', opts:['Reduce demands, offer safe agreed choices and allow processing time.','Repeat the demand more loudly.','Threaten suspension to get compliance.','Stand closer until the learner answers.']},
@@ -598,7 +597,7 @@ var QUESTIONS=[
 {m:10, q:'You think a pupil may need to be physically held to keep people safe. Which statement is correct?', opts:['This training lets you continue alone if you are careful.','Lone tuition must not continue where that need is expected; tell Learning Hive straight away.','A parent upstairs counts as a trained second adult.','A teaching qualification removes the need for review.']},
 {m:10, q:'Which safety arrangement is confirmed and usable?', opts:['The parent is probably upstairs.','Library staff are assumed to help.','The parent or carer has agreed to be available, you know how to reach them and the contact route has been tested.','The tutor will manage if needed.']},
 {m:10, q:'Who sets a pupil’s Red, Amber or Green rating?', opts:['The tutor, after the first session.','The parent.','Learning Hive, in the risk assessment it gives you before tuition starts.','Nobody; the rating is worked out automatically.']},
-{m:11, q:'A scenario answer includes blocking the exit to keep a learner in the room. How is it assessed?', opts:['As a critical safety failure requiring feedback, relearning and reassessment.','Pass if the learner’s work is complete.','Pass if the overall quiz score exceeds 80%.','Pass if no touch is planned.']},
+{m:11, q:'When must your training be refreshed?', opts:['Every twelve months, and sooner if the policy or the risks change.','Only if you change employer.','Never, once you have passed.','Only after a serious incident.']},
 {m:11, q:'What must happen before you start tuition with a new pupil?', opts:['Nothing, if you have passed this training.','Read the pupil’s risk assessment, discuss the key risks with Learning Hive and sign your confirmation.','Ask the parent to sign a permission form for restraint.','Wait until after the first session to read the plan.']}
 ];
 var LETTERS=['A','B','C','D'];
@@ -692,7 +691,7 @@ function handleResult(r){
     var modList=Object.keys(mods).map(Number).sort(function(a,b){return a-b;});
     var h='<strong>'+(passed?'For your learning, review':'Before your next attempt, review')+':</strong><ul style="margin-top:6px;">';
     wrong.forEach(function(n){ var q=QUESTIONS[n-1]; h+='<li>Question '+n+' — Module '+(q?q.m:'?')+'</li>'; });
-    h+='</ul><p style="margin-top:6px;font-weight:500;">Modules to rewatch: '+modList.join(', ')+'. Your manager can give you feedback on these areas.</p>';
+    h+='</ul><p style="margin-top:6px;font-weight:500;">Modules to rewatch: '+modList.join(', ')+'. Ask Learning Hive if anything in these modules is unclear.</p>';
     var ra=document.getElementById('reviewArea'); ra.innerHTML=h; ra.classList.remove('hidden');
   }
 

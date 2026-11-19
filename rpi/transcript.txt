@@ -1,14 +1,14 @@
 LEARNING HIVE
 De-escalating Behaviour, Reasonable Force and RPI Awareness
-Video transcript · Version 1.2 · 18 November 2026 · Aligned to RPI Policy v1.2
+Video transcript · Version 1.3 · 18 November 2026 · Aligned to RPI Policy v1.2
 
-This transcript accompanies the captioned recording. Watching or reading it does not complete training: the online knowledge assessment (which includes the declaration), manager-assessed scenarios and sign-off are separate.
+This transcript accompanies the captioned recording. Watching or reading it does not complete training: you must also pass the online knowledge assessment, which includes the declaration.
 
 ========================================================================
-MODULE 1: WHAT THIS TRAINING EQUIPS YOU TO DO   [starts 0:00 in the full video · length 4:11]
+MODULE 1: WHAT THIS TRAINING EQUIPS YOU TO DO   [starts 0:00 in the full video · length 4:01]
 ========================================================================
 
-This recording is one training programme for all Learning Hive tutors and relevant staff. You will hear eleven modules. Have the current policy available. When invited to reflect, pause the recording, consider your response, and then resume. Watching this video alone does not complete your training. You must also pass the online assessment, which includes your declaration, and complete your manager-assessed scenarios.
+This recording is one training programme for all Learning Hive tutors and relevant staff. You will hear eleven modules. Have the current policy available. When invited to reflect, pause the recording, consider your response, and then resume. Watching this video alone does not complete your training. You must also pass the online assessment, which includes your declaration.
 
 Welcome to Learning Hive’s training on de-escalating behaviour, reasonable force and restrictive physical intervention awareness. This is for every tutor and relevant member of staff, including online tutors. Our aim is to keep learners and adults safe through thoughtful planning, appropriate support and clear escalation. We want you to be able to recognise when the current arrangement is no longer safe and act early, rather than struggle through a session to meet its scheduled finish time.
 
@@ -20,7 +20,7 @@ This training covers awareness, de-escalation and how to follow each pupil’s p
 
 Before you start with any pupil, Learning Hive will send you their risk assessment. Every risk assessment has a Red, Amber or Green rating, which shows the level of risk. Learning Hive writes the risk assessment and sets the rating. Your role is to read it, ask about anything you do not understand, and sign to confirm you have understood it before tuition starts. Module two explains what each rating means for you.
 
-Before you work unsupervised, you must read the policy, watch this training, pass the online assessment, demonstrate a safe response in your scenario assessment and sign the declaration, which is part of the online assessment. A manager then signs off your completion. Ask about unclear instructions before starting; a training completion tick cannot replace that conversation.
+Before you start tuition, you must read the policy, watch this training and pass the online assessment, which includes your declaration. Ask about unclear instructions before starting; a training completion tick cannot replace that conversation.
 
 Before your first session, locate the verified Learning Hive contact information provided with your induction. Save the live safeguarding contact, management contact and backup route where you can reach them. Do not rely on an untested office number to provide emergency cover.
 
@@ -33,7 +33,7 @@ Here is the suggested response. No. Parental permission does not create legal au
 This completes module one. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 2: KNOW THE PUPIL AND PLAN FOR PREVENTION   [starts 4:11 in the full video · length 3:44]
+MODULE 2: KNOW THE PUPIL AND PLAN FOR PREVENTION   [starts 4:01 in the full video · length 3:44]
 ========================================================================
 
 Prevention starts before the first lesson. Read the risk assessment and support plan that Learning Hive sends you. Look for what has happened before, what the learner was experiencing, what helped and what made matters worse. A broad label such as “challenging behaviour” tells you very little. If the information you need is not there, ask Learning Hive.
@@ -55,7 +55,7 @@ Here is the suggested response. A diagnosis does not tell you the actual behavio
 This completes module two. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 3: RECOGNISE ESCALATION AND RESPOND EARLY   [starts 7:55 in the full video · length 3:07]
+MODULE 3: RECOGNISE ESCALATION AND RESPOND EARLY   [starts 7:45 in the full video · length 3:07]
 ========================================================================
 
 Escalation does not follow one fixed pattern. Some learners raise their voice or pace; others stop talking, freeze, pull away or repeatedly ask to leave. Silence is not always calm. Learn this pupil’s signs rather than waiting for behaviour that looks dramatic. Ask yourself what has changed and whether the learning task, environment or adult response is increasing distress.
@@ -77,7 +77,7 @@ Here is the suggested response. One possible response is, “We can pause. Would
 This completes module three. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 4: BODY LANGUAGE, SPACE AND EXITS   [starts 11:02 in the full video · length 3:10]
+MODULE 4: BODY LANGUAGE, SPACE AND EXITS   [starts 10:53 in the full video · length 3:10]
 ========================================================================
 
 Your position in the room matters as much as your words. Before the session, look at exits, furniture, visibility, public access and any hazard. Avoid arrangements where you must squeeze past the learner to leave or where the learner has to squeeze past you. Keep a phone accessible and check you can reach the parent or carer. A paper risk assessment cannot make a blocked doorway safe.
@@ -99,7 +99,7 @@ Here is the suggested response. Both people need a clear movement route. Keep fu
 This completes module four. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 5: WHEN TO STOP A SESSION AND SUMMON HELP   [starts 14:13 in the full video · length 3:11]
+MODULE 5: WHEN TO STOP A SESSION AND SUMMON HELP   [starts 14:03 in the full video · length 3:11]
 ========================================================================
 
 A session can become unsafe even without a physical incident. Stop criteria may include escalating threats, unsafe movement, a weapon, a failed communication route, an absent adult required by the plan, or a change that makes the room unsuitable. Agree those criteria before the session. You should not improvise a new arrangement to keep delivery hours going when an essential control has failed.
@@ -121,7 +121,7 @@ Here is the suggested response. Move to safety, create distance and alert others
 This completes module five. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 6: RESPONDING WHEN A LEARNER LEAVES   [starts 17:24 in the full video · length 3:13]
+MODULE 6: RESPONDING WHEN A LEARNER LEAVES   [starts 17:15 in the full video · length 3:13]
 ========================================================================
 
 “Absconding” describes a learner leaving unexpectedly, but the response depends on the context. A pupil asking for an agreed break is different from a young child running toward a road. Know the specific leaving risk, safe boundaries, adult roles and emergency thresholds in the plan. Do not make a routine decision to restrict movement simply because the pupil should be in a lesson.
@@ -143,7 +143,7 @@ Here is the suggested response. The first may be an agreed break and should foll
 This completes module six. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 7: MANAGING ESCALATION IN AN ONLINE SESSION   [starts 20:38 in the full video · length 3:19]
+MODULE 7: MANAGING ESCALATION IN AN ONLINE SESSION   [starts 20:28 in the full video · length 3:19]
 ========================================================================
 
 Online tutors also need this training. You cannot physically intervene through Zoom, but you may see or hear a serious welfare concern. A pupil can become distressed, disclose harm, threaten self-harm, leave the room or disconnect during an unsafe situation. The absence of face-to-face contact does not make the case automatically Green.
@@ -165,7 +165,7 @@ Here is the suggested response. No. Act on the safety concern. Call nine nine ni
 This completes module seven. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 8: RESTRICTIONS, EMERGENCY JUDGEMENT AND PROHIBITED PRACTICES   [starts 23:57 in the full video · length 3:08]
+MODULE 8: RESTRICTIONS, EMERGENCY JUDGEMENT AND PROHIBITED PRACTICES   [starts 23:48 in the full video · length 3:08]
 ========================================================================
 
 Recognise the action by its effect, not its friendly name. A “supportive hold” that prevents movement is still a restriction. A “calm room” becomes seclusion if the learner cannot leave. Taking away a walking aid to control movement is a restriction without touch. Report these actions even if no injury is visible and even if someone says the plan allowed them.
@@ -187,7 +187,7 @@ Here is the suggested response. No. Preventing departure can restrict movement e
 This completes module eight. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 9: AFTER AN INCIDENT AND THE FORMAL RECORD   [starts 27:05 in the full video · length 4:04]
+MODULE 9: AFTER AN INCIDENT AND THE FORMAL RECORD   [starts 26:56 in the full video · length 4:04]
 ========================================================================
 
 After an incident, make sure the immediate danger has passed and check everyone’s welfare. Look for injury, breathing difficulty, distress and the need for first aid or medical assessment. Lack of a visible mark is not proof that no harm occurred. Give the learner calm support and time to recover. A debrief should not become an interrogation or a demand to agree with the adult’s account.
@@ -211,7 +211,7 @@ Here is the suggested response. The second describes an observed action. Record 
 This completes module nine. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 10: REVIEW THE RISK ASSESSMENT BEFORE YOU START   [starts 31:10 in the full video · length 4:25]
+MODULE 10: REVIEW THE RISK ASSESSMENT BEFORE YOU START   [starts 31:01 in the full video · length 4:25]
 ========================================================================
 
 Learning Hive writes every pupil’s risk assessment and sets its Red, Amber or Green rating. You do not score or categorise the risk yourself. Your job is to read the risk assessment and support plan carefully, make sure you understand them, raise anything that is missing or does not match what you see, and sign to confirm before tuition starts.
@@ -241,23 +241,23 @@ Here is the suggested response. The plan relies on the parent being available, s
 This completes module ten. Continue to the next module when you are ready.
 
 ========================================================================
-MODULE 11: APPLY THE PLAN AND COMPLETE SIGN-OFF   [starts 35:36 in the full video · length 3:10]
+MODULE 11: APPLY THE PLAN AND COMPLETE YOUR TRAINING   [starts 35:26 in the full video · length 2:53]
 ========================================================================
 
-Before your first unsupervised session, check your own readiness. Have you read the current policy? Is your training complete and signed off? Have you read this pupil’s risk assessment, discussed it with Learning Hive and signed your confirmation? Do you have the emergency contacts? Are the agreed arrangements actually in place in this venue or online? If any answer is no, resolve it with Learning Hive before starting.
+Before your first session, check your own readiness. Have you read the current policy? Have you passed the online assessment? Have you read this pupil’s risk assessment, discussed it with Learning Hive and signed your confirmation? Do you have the emergency contacts? Are the agreed arrangements actually in place in this venue or online? If any answer is no, resolve it with Learning Hive before starting.
 
-Watching this video does not complete your training on its own. Next you take the online knowledge assessment. It has fifteen questions, and you need at least twelve correct, which is eighty per cent. Your declaration is part of the same online assessment, so you sign it when you submit your answers. Your manager will then complete three assessed scenarios with you. Each needs at least eight out of ten, and any critical safety error is an automatic fail, however high your quiz score. If you are unsuccessful, you will receive feedback, repeat the relevant learning and take a fresh attempt.
+Watching this video does not complete your training on its own. Next you take the online knowledge assessment. It has fifteen questions, and you need at least twelve correct, which is eighty per cent. Your declaration is part of the same online assessment, so you sign it when you submit your answers. If you do not pass, you will be told which modules to review. Watch them again, then take a fresh attempt.
 
-Once you have passed the assessment and your scenarios, your manager signs off your training. Only then can you work unsupervised. Learning Hive keeps a record of your training, your results, your declaration and your sign-off.
+Once you have passed the assessment, your training is complete. Do not start tuition until you have passed. Learning Hive keeps a record of your training, your results and your declaration, and you will receive a copy by email.
 
 Your training must be refreshed every twelve months, and sooner if the policy or the risks change. A new pupil, a changed venue or a significant incident may also need a new briefing before the next lesson. Tell Learning Hive when an arrangement fails or the plan no longer describes the actual situation.
 
 Keep the core instruction available: if the situation goes beyond this plan, prioritise safety, call for help and contact Learning Hive. Do not improvise a restraint technique.
 
-Take a moment to apply this module. You have passed the knowledge quiz, but you cannot explain what to do if the parent or carer does not respond during a home session. Are you ready to begin unsupervised delivery?
+Take a moment to apply this module. You have passed the knowledge quiz, but you cannot explain what to do if the parent or carer does not respond during a home session. Are you ready to start tuition with this pupil?
 
 Pause the recording now and think through your answer. When you are ready, resume for the suggested response.
 
-Here is the suggested response. No. Passing the quiz does not replace a safe scenario response or a clear plan for this pupil. Talk to Learning Hive before starting. The plan must explain how help is called, when the session stops and who takes responsibility for the learner, and you must understand it before you sign.
+Here is the suggested response. No. Passing the quiz does not replace a clear plan for this pupil. Talk to Learning Hive before starting. The plan must explain how help is called, when the session stops and who takes responsibility for the learner, and you must understand it before you sign.
 
-Thank you for completing the learning modules. Remember, watching this video alone does not complete your training. Now complete the online assessment and declaration, and arrange your scenarios and sign-off with your manager. Before each new placement, read and sign the pupil’s risk assessment. If the situation goes beyond the plan, prioritise safety, call for help and contact Learning Hive. Do not improvise a restraint technique.
+Thank you for completing the learning modules. Remember, watching this video alone does not complete your training. Now complete the online assessment and declaration. Before each new placement, read and sign the pupil’s risk assessment. If the situation goes beyond the plan, prioritise safety, call for help and contact Learning Hive. Do not improvise a restraint technique.
